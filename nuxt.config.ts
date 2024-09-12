@@ -60,6 +60,7 @@ export default defineNuxtConfig({
   },
 
   modules: [
+    '@nuxtjs/tailwindcss',
     '@sidebase/nuxt-auth',
     'nuxt-headlessui',
     '@vue-email/nuxt',

@@ -60,6 +60,7 @@ export default defineNuxtConfig({
   },
 
   modules: [
+    '@prisma/nuxt',
     '@nuxtjs/tailwindcss',
     '@sidebase/nuxt-auth',
     'nuxt-headlessui',

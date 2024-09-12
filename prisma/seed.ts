@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client'
 import { faker } from '@faker-js/faker'
 import bcrypt from 'bcrypt'
 
-const prisma = new PrismaClient()
+const prisma = usePrismaClient()
 
 const reviews = [
     { rating: 5, content: "Absolutely love it! The fit is perfect and the material is super soft." },

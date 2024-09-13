@@ -10,12 +10,16 @@ definePageMeta({
     layout: 'exp-layout'
 })
 
+const router = useRouter()
+
 onMounted(() => {
   //初始化jsPsych
   const jsPsych = initJsPsych({
     use_webaudio: false,
     on_finish: function() {
       jsPsych.data.displayData();
+      router.push('/user/favorites')
+      // router.back()
     }
   });
   
@@ -114,7 +118,11 @@ onMounted(() => {
   };
 
   // 创建实验时间线
-  const timeline = [instructions, practice_trials, test_procedure, debrief_block];
+  const timeline = [
+    instructions, 
+    practice_trials, 
+    // test_procedure, 
+    debrief_block];
 
   // 初始化实验
   jsPsych.run(timeline)

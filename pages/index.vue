@@ -214,7 +214,7 @@ watch(() => query.get(), async () => {
                                 <IconsDoubleChevronRight class="!size-3.5" />
                             </Button>
                         </NuxtLink>
-                        <NuxtLink :to='`/example-flanker-test`'>
+                        <a href='/example-flanker-test'>
                             <Button 
                             @click="toggleFavorite(item.id)"
                                 aria-label="favorite"
@@ -238,7 +238,7 @@ watch(() => query.get(), async () => {
                                 </ClientOnly>
                                 {{ item.favorite ? '已完成' : '参加实验' }}
                             </Button>
-                        </NuxtLink>
+                        </a>
                     </div>
                     <!-- 手机屏幕下 仅显示favorite图标 -->
                     <div class="md:hidden absolute bottom-1 right-1">

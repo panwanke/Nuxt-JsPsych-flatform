@@ -3,7 +3,7 @@
 useHead({
     title: 'Favorites',
     meta: [
-        { name: 'description', content: 'Favorites' }
+        { name: 'description', content: '已参与实验' }
     ],
 })
 
@@ -27,8 +27,8 @@ const removeItem = useDebounceFn(async (id) => {
     <div>
         <Banner
             icon="bookmark"
-            title="Favorites"
-            description="Bookmark your favorite items for later"
+            title="已参与"
+            description=""
         >
             <Sort 
                 v-if="items?.length !== 0"
@@ -66,7 +66,7 @@ const removeItem = useDebounceFn(async (id) => {
                                     variant="secondary" 
                                     size="small"
                                 > 
-                                    <span> View item </span>
+                                    <span>查看详情</span>
                                     <IconsDoubleChevronRight class="!size-3.5" />
                                 </Button>
                             </NuxtLink>

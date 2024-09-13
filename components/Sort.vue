@@ -14,12 +14,12 @@ const emit = defineEmits(['sort'])
 const route = useRoute()
 
 const options = props.variant === 'items' ? [
-    { id: 'price',        name: 'Price'        },
-    { id: 'review-count', name: 'Review count' },
-    { id: 'rating',       name: 'Rating'       }
+    { id: 'price',        name: '被试费'        },
+    { id: 'review-count', name: '参加人数' },
+    { id: 'rating',       name: '评分'       }
 ] : [
-    { id: 'rating',       name: 'Rating'       },
-    { id: 'date-added',   name: 'Date added'   }
+    { id: 'rating',       name: '评分'       },
+    { id: 'date-added',   name: '添加日期'   }
 ]
 
 const icons = {

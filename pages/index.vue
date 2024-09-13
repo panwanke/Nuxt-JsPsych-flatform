@@ -18,26 +18,56 @@ const query = useQuery()
 const page = ref(1)
 const loading = ref(false)
 
-const display = computed(() => route.query?.display ?? 'grid')
+const display = computed(() => route.query?.display ?? 'list')
 
 const favorites = useFavorites()
 const userFavorites = ref(await favorites.getIds())
 
-const { data } = await useFetch('/api/item', {
-    query: {
-        page: page.value,
-        ...query.get()
-    }
+// const { data } = await useFetch('/api/item', {
+//     query: {
+//         page: page.value,
+//         ...query.get()
+//     }
+// })
+const data = ref({
+    "items":[
+      {
+        "id": "6f0ac312-a5cc-4621-bb67-2ec594ce6beb",
+        "createdAt": "2024-09-12T13:26:29.976Z",
+        "updatedAt": "2024-09-12T13:26:29.976Z",
+        "name": "Flanker Task 测试",
+        "description": "用于测试的 flanker task",
+        "photoUrl": "img/items/slipknot_cap.webp",
+        "price": 20,
+        "sizes": [],
+        "reviews": [
+          {
+            "id": 570,
+            "createdAt": "2024-09-12T13:26:29.976Z",
+            "updatedAt": "2024-09-12T13:26:29.976Z",
+            "rating": 3,
+            "content": "It’s decent, but I don’t think I would buy it again.",
+            "verified": false,
+            "itemId": "6f0ac312-a5cc-4621-bb67-2ec594ce6beb",
+            "authorId": 71
+          },
+        ],
+        "rating": 3.25
+      }
+    ],
+    "count": 60
 })
+// console.log(`data: ${JSON.stringify(data.value, null, 2)}`)
+
 
 async function refresh() {
     page.value = 1
-    const { data } = await useFetch('/api/item', {
-        query: {
-            page: page.value,
-            ...query.get()
-        }
-    })
+    // const { data } = await useFetch('/api/item', {
+    //     query: {
+    //         page: page.value,
+    //         ...query.get()
+    //     }
+    // })
     items.value = data.value.items
     count.value = data.value.count
     window.scrollTo(0, 0)
@@ -101,10 +131,11 @@ watch(() => query.get(), async () => {
 
 <template>
     <div>
+        <!-- 排序和显示方式header -->
         <Banner
             icon="shopping-bag"
-            title="Shop"
-            :description="route.query.search ? `We found ${count} ${count === 1 ? 'result' : 'results'} for &quot${route.query.search}&quot` : 'Browse 50+ items from our collection'"
+            title="已发布实验"
+            :description="route.query.search ? `在${route.query.search}检索下，已经有 ${count} ${count === 1 ? 'result' : 'results'} 个实验发布` : '已经有超过 50 的实验'"
         >
             <div class="flex flex-wrap gap-2 md:gap-4 justify-center items-center text-white">
                 <div v-if="items.length" class="flex flex-wrap-reverse justify-center gap-2 md:gap-4">
@@ -114,6 +145,7 @@ watch(() => query.get(), async () => {
             </div>
         </Banner>
         <div class="mt-4 lg:mt-6">
+            <!-- 无 items 时界面 -->
             <EmptyState 
                 v-if="!items.length"
                 title="No results found"
@@ -129,6 +161,7 @@ watch(() => query.get(), async () => {
                     <IconsDoubleChevronRight class="!size-4" />
                 </Button>
             </EmptyState>
+            <!-- grid 显示模式 -->
             <div 
                 v-if="display === 'grid'" 
                 class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-3 place-items-center mx-auto w-fit md:w-auto"
@@ -161,6 +194,7 @@ watch(() => query.get(), async () => {
                     </Button>
                 </GridItemCard>
             </div>
+            <!-- list 显示模式 -->
             <div 
                 v-else-if="display === 'list'" 
                 class="flex flex-col gap-2 md:gap-3"
@@ -169,40 +203,44 @@ watch(() => query.get(), async () => {
                     v-for="item in items" 
                     :key="item.id" 
                     :item="item"
-                >
+                >   
+                    <!-- 查看详情和添加按钮 -->
                     <div class="hidden md:flex flex-col justify-center shrink-0 gap-2 mr-5 w-40">
                         <NuxtLink :to='`/item/${item.id}`'>
                             <Button 
-                                variant="secondary" 
-                                size="small"
-                            > 
-                                <span> View item </span>
+                            size="small"
+                                                        > 
+                                <span>查看详情</span>
                                 <IconsDoubleChevronRight class="!size-3.5" />
                             </Button>
                         </NuxtLink>
-                        <Button 
+                        <NuxtLink :to='`/example-flanker-test`'>
+                            <Button 
                             @click="toggleFavorite(item.id)"
-                            aria-label="favorite"
-                            size="small"
-                        > 
-                            <ClientOnly>
-                                <IconsBookmark
-                                    variant="solid"
-                                    :class="[
-                                        item.favorite ? 'stroke-gray-lighter' : 'text-transparent stroke-white',
-                                        '!size-5 transition duration-200'
-                                    ]"
-                                />
-                                <template #fallback>
+                                aria-label="favorite"
+                                size="small"
+                                variant="secondary" 
+                            > 
+                                <ClientOnly>
                                     <IconsBookmark
                                         variant="solid"
-                                        class="text-transparent stroke-white !size-5 transition duration-200"
+                                        :class="[
+                                            item.favorite ? 'stroke-gray-lighter' : 'text-transparent stroke-white',
+                                            '!size-5 transition duration-200'
+                                        ]"
                                     />
-                                </template>
-                            </ClientOnly>
-                            {{ item.favorite ? 'Remove' : 'Add' }}
-                        </Button>
+                                    <template #fallback>
+                                        <IconsBookmark
+                                            variant="solid"
+                                            class="text-transparent stroke-white !size-5 transition duration-200"
+                                        />
+                                    </template>
+                                </ClientOnly>
+                                {{ item.favorite ? '已完成' : '参加实验' }}
+                            </Button>
+                        </NuxtLink>
                     </div>
+                    <!-- 手机屏幕下 仅显示favorite图标 -->
                     <div class="md:hidden absolute bottom-1 right-1">
                         <Button 
                             @click="toggleFavorite(item.id)" 
@@ -228,6 +266,7 @@ watch(() => query.get(), async () => {
                     </div>
                 </ListItemCard>
             </div>
+            <!-- 底部 loading 显示-->
             <div 
                 v-if="loading"
                 class="flex w-full items-center justify-center gap-1 my-4 mt-8 md:mt-10 lg:mt-12"

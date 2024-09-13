@@ -9,6 +9,7 @@ const props = defineProps({
 <template>
     <div class="relative flex justify-between w-full p-1 lg:p-1.5 rounded-2xl bg-gray-dark">
         <div class="flex w-full md:mr-10 lg:mr-20">
+            <!-- 图片链接 -->
             <NuxtLink :to='`/item/${item?.id}`' class="shrink-0">
                 <NuxtImg 
                     :src="item?.photoUrl" 
@@ -17,6 +18,7 @@ const props = defineProps({
                     preload 
                 />
             </NuxtLink>
+            <!-- 内容 -->
             <div class="flex flex-col w-full justify-between overflow-hidden text-white my-1 md:my-2 mr-2 ml-4 md:ml-6">
                 <div>
                     <NuxtLink :to='`/item/${item?.id}`'>
@@ -44,12 +46,13 @@ const props = defineProps({
                     </div>
                 </div>
                 <div class="text-base md:text-lg whitespace-nowrap">
-                    <span class="font-extralight">$</span>
                     <span v-if="item.quantity && item.quantity !== 1"> {{ (item.price * item.quantity).toFixed(2) }} </span>
                     <span v-else> {{ item.price }} </span>
+                    <span class="font-extralight">元</span>
                 </div>
             </div>
         </div>
+        <!-- favorite 插槽 -->
         <slot />
     </div>
 </template>

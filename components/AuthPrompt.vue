@@ -18,7 +18,7 @@ const runtimeConfig = useRuntimeConfig()
                     size="small" 
                     class="w-full"
                 > 
-                    LOG IN 
+                    登陆
                 </Button>
             </NuxtLink>
             <NuxtLink :to="{ name: 'auth-register', query: { callbackUrl: `${runtimeConfig.public.authOrigin}${route.fullPath}` }}">
@@ -27,7 +27,7 @@ const runtimeConfig = useRuntimeConfig()
                     size="small" 
                     class="w-full"
                 > 
-                    REGISTER 
+                    注册 
                 </Button>
             </NuxtLink>
         </div>

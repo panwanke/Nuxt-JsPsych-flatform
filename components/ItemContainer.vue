@@ -1,32 +1,33 @@
 <script setup>
 
-import { useToast } from 'vue-toastification'
+// import { useToast } from 'vue-toastification'
 
 const props = defineProps({
     item: Object,
     isFavorite: Boolean
 })
 
-const route = useRoute()
-const toast = useToast()
+// const route = useRoute()
+// const toast = useToast()
 
-const cart = useCart()
+// const cart = useCart()
 
-const size = ref()
+// const size = ref()
 
-const addToCart = useDebounceFn(async () => {
-    try {
-        await cart.addItem(route.params.id, size.value, props.item.sizes.length)
-    } 
-    catch(e) {
-        toast.error(e.statusMessage)
-    }
-})
+// const addToCart = useDebounceFn(async () => {
+//     try {
+//         await cart.addItem(route.params.id, size.value, props.item.sizes.length)
+//     } 
+//     catch(e) {
+//         toast.error(e.statusMessage)
+//     }
+// })
 
 </script>
 
 <template>
     <div class="grid grid-cols-4 gap-2 md:gap-3">
+        <!-- item 介绍 -->
         <div class="flex flex-col sm:flex-row col-span-4 xl:col-span-3 p-1 lg:p-1.5 bg-gray-dark rounded-2xl">
             <NuxtImg 
                 :src="item.photoUrl" 
@@ -78,46 +79,53 @@ const addToCart = useDebounceFn(async () => {
                 </div>
             </div>
         </div>
+        <!-- 加入购物车 -->
         <div class="col-span-4 xl:col-span-1 p-6 flex flex-col gap-4 bg-gray-dark rounded-2xl text-white">
                 <div class="text-xl lg:text-2xl flex items-center justify-center"> 
-                    <span class="font-extralight">$</span>
                     <span> {{ item.price }} </span>
-                    <span class="text-base xl:text-lg ml-1 xl:ml-1.5 text-gray-lightest font-light"> (includes taxes) </span>
+                    <span class="font-extralight">元</span>
+                    <span class="text-base xl:text-lg ml-1 xl:ml-1.5 text-gray-lightest font-light"> (需要经过审核) </span>
                 </div>
             <div class="flex flex-col sm:flex-row xl:flex-col h-full gap-4 justify-between">
                 <div class="flex flex-col gap-4 sm:justify-between xl:justify-normal w-full">
-                    <Button
+                    <!-- add to cart -->
+                    <!-- <Button
                         @click="addToCart"
                         size="medium"
                         variant="secondary"
                     >
                         <IconsShoppingCart class="!size-4 sm:!size-5" />
                         <span> ADD TO CART </span>
-                    </Button>
-                    <Button
-                        @click="$emit('toggleFavorite')" 
-                        size="medium"
-                        aria-label="favorite"
-                    > 
-                        <ClientOnly>
-                            <IconsBookmark
-                                variant="solid"
-                                :class="[
-                                    isFavorite ? 'stroke-gray-primary' : 'text-transparent stroke-white',
-                                    '!size-4 sm:!size-5 transition duration-200'
-                                ]"
-                            />
-                            <template #fallback>
+                    </Button> -->
+                    <!-- add to favorite -->
+                    <NuxtLink :to='`/example-flanker-test`'>
+                        <Button
+                            @click="$emit('toggleFavorite')" 
+                            size="medium"
+                            aria-label="favorite"
+                            variant="secondary"
+                        > 
+                            <ClientOnly>
                                 <IconsBookmark
                                     variant="solid"
-                                    class="text-transparent stroke-white !size-4 sm:!size-5 transition duration-200"
+                                    :class="[
+                                        isFavorite ? 'stroke-gray-primary' : 'text-transparent stroke-white',
+                                        '!size-4 sm:!size-5 transition duration-200'
+                                    ]"
                                 />
-                            </template>
-                        </ClientOnly>
-                        <span> {{ isFavorite ? 'ADDED TO FAVORITES' : 'ADD TO FAVORITES' }} </span>
-                    </Button>
+                                <template #fallback>
+                                    <IconsBookmark
+                                        variant="solid"
+                                        class="text-transparent stroke-white !size-4 sm:!size-5 transition duration-200"
+                                    />
+                                </template>
+                            </ClientOnly>
+                            <span> {{ isFavorite ? '已经参加' : '现在参加' }} </span>
+                        </Button>
+                    </NuxtLink>
                 </div>
-                <div class="bg-gray-primary py-3 lg:py-4 rounded-xl font-light flex flex-col items-center gap-3 w-full">
+                <!-- 全球包邮等额外信息 -->
+                <!-- <div class="bg-gray-primary py-3 lg:py-4 rounded-xl font-light flex flex-col items-center gap-3 w-full">
                     <div class="flex items-center gap-1.5">
                         <IconsEarth class="lg:!size-5 text-red-light" />
                         <span class="text-sm lg:text-base"> Free international shipping </span>
@@ -130,7 +138,7 @@ const addToCart = useDebounceFn(async () => {
                         <IconsKeyhole class="lg:!size-5 text-red-light" />
                         <span class="text-sm lg:text-base"> Secure online payment </span>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

@@ -15,7 +15,15 @@ definePageMeta({
 
 const { signOut } = useAuth()
 
-const user = ref((await useFetch('/api/user')).data.value)
+// const user = ref((await useFetch('/api/user')).data.value)
+// console.log('user',JSON.stringify(user.value))
+const user = ref({
+    "id": 1,
+    "name": "Test Account",
+    "email": "test@theheavyshop.com",
+    "photoUrl": null,
+    "registeredOn": "12 September 2024"
+})
 
 const toast = useToast()
 const bus = useEventBus('modal')

@@ -32,6 +32,7 @@ model Item {
   description String
   photoUrl    String
   price       Float
+  expStatus   String
   sizes       String[]
   reviews     Review[]
   favorites   Favorites[]  @relation("FavoritesToItem")

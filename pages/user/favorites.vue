@@ -15,6 +15,10 @@ const loggedIn = useStatus()
 const favorites = useFavorites()
 
 const items = ref(await favorites.getItems())
+console.log('fav items',JSON.stringify(items.value, null, 4))
+items.value.map((item) => {
+    item.expStatus = 'doing'
+ })
 
 const removeItem = useDebounceFn(async (id) => {
     await favorites.removeItem(id)
@@ -61,22 +65,44 @@ const removeItem = useDebounceFn(async (id) => {
                         :item="item"
                     >
                         <div class="hidden md:flex flex-col justify-center shrink-0 gap-2 mr-5 w-40">
-                            <NuxtLink :to='`/item/${item.id}`'>
+                            <!-- TODO: 如果实验成功完成，可跳转到用户的实验结果 -->
+                            <div 
+                                v-if="item.expStatus === 'done'"
+                            >
                                 <Button 
+                                    size="small" 
                                     variant="secondary" 
+                                    > 
+                                    <IconsTrashBin class="!size-5" />
+                                    <span> 已完成实验 </span>
+                                </Button>
+                                <!-- <NuxtLink :to='`/item/${item.id}`'> -->
+                                <Button 
                                     size="small"
                                 > 
-                                    <span>查看详情</span>
+                                    <span>查看实验结果</span>
                                     <IconsDoubleChevronRight class="!size-3.5" />
                                 </Button>
-                            </NuxtLink>
-                            <Button 
-                                @click="removeItem(item.id)"
-                                size="small" 
-                            > 
-                                <IconsTrashBin class="!size-5" />
-                                <span> Remove </span>
-                            </Button>
+                                <!-- </NuxtLink> -->
+                            </div>
+                            <div v-else>
+                                <a href='/example-flanker-test'>
+                                    <Button 
+                                        size="small"
+                                        variant="secondary" 
+                                    > 
+                                        <span>现在参加实验</span>
+                                        <IconsDoubleChevronRight class="!size-3.5" />
+                                    </Button>
+                                </a>
+                                <Button 
+                                    @click="removeItem(item.id)"
+                                    size="small" 
+                                    > 
+                                    <IconsTrashBin class="!size-5" />
+                                    <span> 已选择(点击退出) </span>
+                                </Button>
+                            </div>
                         </div>
                         <div class="md:hidden absolute bottom-1 right-1">
                             <Button 

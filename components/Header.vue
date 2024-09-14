@@ -31,7 +31,7 @@ const navItems = [
     width: 100%;
     height: 2px;
     border-radius: 100px;
-    background-color: #C70404;
+    background-color: #D4171E;
     bottom: 0;
     left: 0;
     transform-origin: right;

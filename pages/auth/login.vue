@@ -1,10 +1,7 @@
 <script setup>
 
 useHead({
-    title: 'Login',
-    meta: [
-        { name: 'description', content: 'Login' }
-    ],
+    title: 'Login'
 })
 
 definePageMeta({
@@ -85,7 +82,7 @@ async function login(provider) {
                         </NuxtLink>
                     </Label>
                 </div>
-                <Error>  {{ errorMessage }} </Error>
+                <Error> {{ errorMessage }} </Error>
                 <Button 
                     type="submit" 
                     :variant="loading ? 'loading' : 'primary'"
@@ -104,7 +101,7 @@ async function login(provider) {
                     aria-label="github"
                     class="text-white hover:text-gray-lightest transition duration-200"
                 >
-                    <IconsGithub />
+                    <IconsGitHub />
                 </button>
                 <button 
                     @click="login('discord')"

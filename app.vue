@@ -3,8 +3,16 @@
 useHead({
 	titleTemplate: (titleChunk) => {
 		return titleChunk ? `${titleChunk} - The Heavy Shop` : 'The Heavy Shop'
-	}
+	},
+	meta: [{ 
+        name: 'description', content: '\
+        Your premier destination for licensed heavy metal merchandise. \
+        We offer a curated selection of apparel, accessories, and collectibles, all designed to celebrate the style you love. \
+        Explore our extensive collection and discover the perfect items to express your passion for the genre!'
+    }],
 })
+
+useSync()
 
 </script>
 

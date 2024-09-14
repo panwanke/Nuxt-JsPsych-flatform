@@ -4,7 +4,6 @@ import { useToast } from 'vue-toastification'
 
 const route = useRoute()
 const toast = useToast()
-const query = useQuery()
 
 const favorites = useFavorites()
 const userFavorites = ref(await favorites.getIds())
@@ -23,17 +22,14 @@ const toggleFavorite = useDebounceFn(async () => {
 const headers = useRequestHeaders(['cookie'])
 const { data: user } = await useFetch('/api/user')
 const { error, data: item } = await useAsyncData('item', () => $fetch(`/api${route.path}`, {
-    query: query.get(),
+    query: useQuery(),
     headers
 }))
 if (error.value)
     throw createError(error.value)
 
 useHead({
-    title: item?.value?.name,
-    meta: [
-        { name: 'description', content: item?.value?.name }
-    ],
+    title: item?.value?.name
 })
 
 definePageMeta({
@@ -87,25 +83,19 @@ async function deleteReview(id) {
                 </p>
             </AuthPrompt>
             <Separator v-if="!loggedIn || (loggedIn && !userLeftReview)" />
-            <div class="sm:ml-1 flex flex-col items-center sm:flex-row gap-2 justify-between">
-                <div class="flex flex-col items-center sm:items-start text-white">
-                    <div class="flex items-center gap-1.5 lg:gap-2">
-                        <IconsReview class="size-6 lg:size-7" />
-                        <h1 class="text-2xl lg:text-3xl">
-                            Reviews
-                            <span class="font-light"> ({{ item.reviews?.length }}) </span>
-                        </h1>
-                    </div>
-                    <p class="text-sm lg:text-base text-center"> 
-                        Read genuine customer experiences 
-                    </p>
-                </div>
+            <Banner
+                icon="review"
+                title="Reviews"
+                description="Read genuine customer experiences"
+                :reviewCount="item.reviews?.length"
+            >
                 <Sort 
                     v-if="item.reviews?.length"
                     @sort="async () => { await refreshNuxtData('item') }"
                     variant="reviews" 
                 />
-            </div>
+            </Banner>
+
             <div class="mt-2 lg:mt-4">
                 <EmptyState 
                     v-if="!item.reviews?.length"

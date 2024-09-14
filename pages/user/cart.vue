@@ -3,10 +3,7 @@
 import { useToast } from 'vue-toastification'
 
 useHead({
-    title: 'Cart',
-    meta: [
-        { name: 'description', content: 'Cart' }
-    ],
+    title: 'Cart'
 })
 
 definePageMeta({

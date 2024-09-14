@@ -7,6 +7,7 @@ const props = defineProps({
     isFavorite: Boolean
 })
 
+const emit = defineEmits(['toggleFavorite'])
 // const route = useRoute()
 // const toast = useToast()
 
@@ -100,7 +101,7 @@ const props = defineProps({
                     <!-- add to favorite -->
                     <NuxtLink :to='`/example-flanker-test`'>
                         <Button
-                            @click="$emit('toggleFavorite')" 
+                            @click="emit('toggleFavorite')" 
                             size="medium"
                             aria-label="favorite"
                             variant="secondary"

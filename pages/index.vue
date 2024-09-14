@@ -279,3 +279,62 @@ watch(() => query.get(), async () => {
         </div>
     </div>
 </template>
+
+<style scoped>
+
+.underline-effect {
+    position: relative;
+}
+.underline-effect::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    border-radius: 4px;
+    background-color: #D4171E;
+    bottom: 0;
+    left: 0;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform .4s;
+}
+@media screen and (max-width: 640px) {
+    .underline-effect::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 3px;
+        border-radius: 4px;
+        background-color: #D4171E;
+        bottom: 0;
+        left: 0;
+        transform-origin: right;
+        transform: scaleX(0);
+        transition: transform .4s;
+    }
+}
+.underline-effect:hover::before {
+    transform-origin: left;
+    transform: scaleX(1);
+}
+
+.swiper {
+    --swiper-pagination-color: #FB4242;
+    --swiper-pagination-left: auto;
+    --swiper-pagination-right: 8px;
+    --swiper-pagination-bottom: 8px;
+    --swiper-pagination-top: auto;
+    --swiper-pagination-fraction-color: inherit;
+    --swiper-pagination-progressbar-bg-color: rgba(0, 0, 0, 0.25);
+    --swiper-pagination-progressbar-size: 4px;
+    --swiper-pagination-bullet-size: 8px;
+    --swiper-pagination-bullet-width: 8px;
+    --swiper-pagination-bullet-height: 8px;
+    --swiper-pagination-bullet-inactive-color: #171717;
+    --swiper-pagination-bullet-inactive-opacity: 0.75;
+    --swiper-pagination-bullet-opacity: 1;
+    --swiper-pagination-bullet-horizontal-gap: 4px;
+    --swiper-pagination-bullet-vertical-gap: 6px;
+}
+
+</style>

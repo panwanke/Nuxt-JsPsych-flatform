@@ -1,7 +1,7 @@
 <script setup>
 
 useHead({
-    title: 'Favorites',
+    title: '参与的实验',
     meta: [
         { name: 'description', content: '已参与实验' }
     ],

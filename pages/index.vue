@@ -26,7 +26,7 @@ const userFavorites = ref(await favorites.getIds())
 // const { data } = await useFetch('/api/item', {
 //     query: {
 //         page: page.value,
-//         ...query.get()
+//         ...query
 //     }
 // })
 const data = ref({
@@ -65,7 +65,7 @@ async function refresh() {
     // const { data } = await useFetch('/api/item', {
     //     query: {
     //         page: page.value,
-    //         ...query.get()
+    //         ...query
     //     }
     // })
     items.value = data.value.items
@@ -115,7 +115,7 @@ watchDebounced(y, async (newValue) => {
         let { data: newData } = await useFetch('/api/item', {
             query: {
                 page: page.value,
-                ...query.get()
+                ...query
             }
         })
         items.value.push(...newData.value.items)
@@ -123,7 +123,7 @@ watchDebounced(y, async (newValue) => {
     }
 }, { debounce: 50, maxWait: 500 })
 
-watch(() => query.get(), async () => {
+watch(() => query, async () => {
     setTimeout(async () => await refresh(), 50)
 })
 

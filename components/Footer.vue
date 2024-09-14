@@ -4,11 +4,11 @@
             <Separator class="!py-2 !pt-0" />
             <div class="justify-between mx-4 md:mx-6 gap-2 h-14 flex items-center -mt-2">
                 <p class="text-sm md:text-base font-light underline-effect">
-                    © 2024 Alex Croitoriu
+                    © 2024 Wanke Pan
                 </p>
                 <div class="flex items-center gap-2.5 md:gap-3.5">
                     <NuxtLink 
-                        to="https://github.com/JellyGamez" 
+                        to="https://github.com/panwanke" 
                         target="_blank" 
                         aria-label="github"
                         class="text-white hover:text-gray-lightest transition duration-200"
@@ -16,7 +16,7 @@
                         <IconsGitHub class="!size-6 md:!size-7" />
                     </NuxtLink>
                     <NuxtLink 
-                        to="https://discord.com/users/273850522157580288" 
+                        to="https://discord.com/users/935067419318308885" 
                         target="_blank" 
                         aria-label="discord"
                         class="text-white hover:text-gray-lightest transition duration-200"
@@ -24,15 +24,7 @@
                         <IconsDiscord class="!size-6 md:!size-7" />
                     </NuxtLink>
                     <NuxtLink 
-                        to="https://www.linkedin.com/in/alex-croitoriu-939486328/" 
-                        target="_blank" 
-                        aria-label="linkedin"
-                        class="text-white hover:text-gray-lightest transition duration-200"
-                    >
-                        <IconsLinkedIn class="!size-5 md:!size-6" />
-                    </NuxtLink>
-                    <NuxtLink 
-                        to="mailto:alexcroitoriu2005@gmail.com" 
+                        to="mailto:panwanke2023@gmail.com" 
                         target="_blank"
                         aria-label="email"
                         class="text-white hover:text-gray-lightest transition duration-200"

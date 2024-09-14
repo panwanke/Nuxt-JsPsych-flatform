@@ -1,3 +1,4 @@
+<!-- pages/auth/login.vue -->
 <script setup>
 
 useHead({

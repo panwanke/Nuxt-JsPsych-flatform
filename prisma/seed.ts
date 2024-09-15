@@ -202,6 +202,7 @@ async function main() {
         create: {
             email: 'test@theheavyshop.com',
             name: 'Test Account',
+            role: 'admin',
             password: bcrypt.hashSync('password', 10),
             favorites: {
                 create: {

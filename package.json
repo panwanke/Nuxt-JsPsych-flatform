@@ -1,11 +1,15 @@
 {
   "name": "nuxt-app",
   "private": true,
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview"
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare && prisma generate && prisma migrate reset --force"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.0.0",
@@ -22,13 +26,14 @@
     "jsonwebtoken": "^9.0.2",
     "nuxt": "^3.13.0",
     "nuxt-headlessui": "^1.2.0",
+    "prisma": "5.19.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.2",
     "vue-toastification": "2.0.0-rc.5"
   },
   "dependencies": {
     "@nuxtjs/robots": "^4.1.7",
-    "@prisma/nuxt": "^0.0.35",
+    "@prisma/client": "5.19.1",
     "@vercel/blob": "^0.23.4",
     "@vueuse/core": "^11.0.3",
     "@vueuse/nuxt": "^11.0.3",

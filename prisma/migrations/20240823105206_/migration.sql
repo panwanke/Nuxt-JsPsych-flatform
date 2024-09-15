@@ -5,6 +5,7 @@ CREATE TABLE "User" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "role" TEXT NOT NULL DEFAULT E'user',
     "password" TEXT NOT NULL,
     "passwordResetToken" TEXT,
     "photoUrl" TEXT,

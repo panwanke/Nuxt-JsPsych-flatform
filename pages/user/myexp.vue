@@ -122,7 +122,7 @@ const removeItem = useDebounceFn(async (id) => {
                         </p>
                     "
                 >
-                    <NuxtLink to="/new_index" class="max-w-32 sm:max-w-40 w-full">
+                    <NuxtLink to="/" class="max-w-32 sm:max-w-40 w-full">
                         <Button 
                             variant="secondary" 
                             size="small" 

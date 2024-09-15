@@ -4,7 +4,7 @@
 // const loggedIn = useStatus()
 
 const navItems = [
-    { id: 'home',      name: '发布',      icon: 'home',          url: '/new_index'               },
+    { id: 'home',      name: '发布',      icon: 'home',          url: '/'               },
     { id: 'shop',      name: '已参与',      icon: 'shopping-bag',  url: '/user/myexp'           },
     { id: 'about',     name: '我的',     icon: 'document',      url: '/user/account'          },
 ]

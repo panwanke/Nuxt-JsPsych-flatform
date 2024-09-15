@@ -59,7 +59,7 @@ export default function useFavorites() {
             }
         }
         bus.emit('favorites')
-        toast.success("Item added to favorites!")
+        toast.success("实验添加到“已参与”面板!")
     }
 
     async function removeItem(id: String) {
@@ -80,7 +80,7 @@ export default function useFavorites() {
             }
         }
         bus.emit('favorites')
-        toast.success("Item removed from favorites!")
+        toast.success("实验已从参加面板移除!")
     }
 
     async function syncItems() {

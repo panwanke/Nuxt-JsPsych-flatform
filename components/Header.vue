@@ -1,56 +1,67 @@
 <script setup>
 
-const { signOut } = useAuth()
-const loggedIn = useStatus()
+// const { signOut } = useAuth()
+// const loggedIn = useStatus()
 
 const navItems = [
-    { id: 'home',      name: 'Home',      icon: 'home',          url: '/'               },
-    { id: 'shop',      name: 'Shop',      icon: 'shopping-bag',  url: '/shop'           },
-    { id: 'about',     name: 'About',     icon: 'document',      url: '/about'          },
+    { id: 'home',      name: '发布',      icon: 'home',          url: '/new_index'               },
+    { id: 'shop',      name: '已参与',      icon: 'shopping-bag',  url: '/user/myexp'           },
+    { id: 'about',     name: '我的',     icon: 'document',      url: '/user/account'          },
 ]
 
-const userNavItems = [
-    { id: 'favorites', name: 'Favorites', icon: 'bookmark',      url: '/user/favorites' },
-    { id: 'cart',      name: 'Cart',      icon: 'shopping-cart', url: '/user/cart'      }
-]
+// const userNavItems = [
+//     { id: 'favorites', name: 'Favorites', icon: 'bookmark',      url: '/user/favorites' },
+//     { id: 'cart',      name: 'Cart',      icon: 'shopping-cart', url: '/user/cart'      }
+// ]
 
-const userOptions = (!loggedIn) ? [
-    { id: 'login',     name: 'Log In',    icon: 'login',         url: '/auth/login'     },
-    { id: 'register',  name: 'Register',  icon: 'register',      url: '/auth/register'  }
-] : [
-    { id: 'account',   name: 'Account',   icon: 'user',          url: '/user/account'   },
-    { id: 'logout',    name: 'Log Out',   icon: 'logout',        action: 'signOut'      }
-]
+// const userOptions = (!loggedIn) ? [
+//     { id: 'login',     name: 'Log In',    icon: 'login',         url: '/auth/login'     },
+//     { id: 'register',  name: 'Register',  icon: 'register',      url: '/auth/register'  }
+// ] : [
+//     { id: 'account',   name: 'Account',   icon: 'user',          url: '/user/account'   },
+//     { id: 'logout',    name: 'Log Out',   icon: 'logout',        action: 'signOut'      }
+// ]
 
-const favorites = useFavorites()
-const cart = useCart()
+// const favorites = useFavorites()
+// const cart = useCart()
 
-const count = reactive({
-    favorites: await favorites.getCount(),
-    cart: await cart.getCount()
-})
+// const count = reactive({
+//     favorites: await favorites.getCount(),
+//     cart: await cart.getCount()
+// })
 
-const bus = useEventBus('count')
-bus.on(async function(event) {
-    if (event === 'favorites')
-        count.favorites = await favorites.getCount()
-    if (event === 'cart')
-        count.cart = await cart.getCount()
-})
+// const bus = useEventBus('count')
+// bus.on(async function(event) {
+//     if (event === 'favorites')
+//         count.favorites = await favorites.getCount()
+//     if (event === 'cart')
+//         count.cart = await cart.getCount()
+// })
 
-function handleAction(action) {
-    if (action === 'signOut')
-        signOut()
-    else if (action === 'search') {
-        const bus = useEventBus('modal')
-        bus.emit('search')
-    }
-}
+// function handleAction(action) {
+//     if (action === 'signOut')
+//         signOut()
+//     else if (action === 'search') {
+//         const bus = useEventBus('modal')
+//         bus.emit('search')
+//     }
+// }
 
 </script>
 
 <template>
     <div class="fixed w-screen top-0 z-50 h-16 bg-gray-dark shadow-lg">
+        <div class="flex gap-x-3 items-center justify-center mx-auto h-full">
+            <NavItem
+                v-for="item in navItems"
+                :key="item.id"
+                :label="item.name" 
+                :url="item.url"
+                :id="item.id"
+            />
+        </div>
+    </div>
+    <!-- <div class="fixed w-screen top-0 z-50 h-16 bg-gray-dark shadow-lg">
         <div class="grid grid-cols-3 px-3 md:px-10 max-w-5xl xl:max-w-8xl mx-auto h-full">
             <div class="flex md:hidden">
                 <HeadlessMenu as="div" class="flex items-center" v-slot="{ open }">
@@ -177,7 +188,7 @@ function handleAction(action) {
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </template>
 
 <style scoped>

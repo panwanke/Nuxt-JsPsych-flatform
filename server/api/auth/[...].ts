@@ -3,8 +3,8 @@ import bcrypt from 'bcrypt'
 import prisma from '~/server/utils'
 import { NuxtAuthHandler } from '#auth'
 
-import GithubProvider from 'next-auth/providers/github'
-import DiscordProvider from 'next-auth/providers/discord'
+// import GithubProvider from 'next-auth/providers/github'
+// import DiscordProvider from 'next-auth/providers/discord'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
 async function getUserByEmail(email: string | null | undefined) {
@@ -12,6 +12,14 @@ async function getUserByEmail(email: string | null | undefined) {
         return await prisma.user.findUniqueOrThrow({
             where: {
                 email: email as string
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                photoUrl: true,
+                createdAt: true
             }
         })
     }
@@ -53,6 +61,7 @@ export default NuxtAuthHandler({
     callbacks: {
         async signIn({ user, account, profile }) {
             try {
+                console.log('user',JSON.stringify(user),JSON.stringify(account))
                 await getUserByEmail(user.email)
             }
             catch(e) {
@@ -67,16 +76,16 @@ export default NuxtAuthHandler({
         }
     },
     providers: [
-        // @ts-expect-error
-        GithubProvider.default({
-            clientId: process.env.GITHUB_CLIENT_ID,
-            clientSecret: process.env.GITHUB_CLIENT_SECRET
-        }),
-        // @ts-expect-error
-        DiscordProvider.default({
-            clientId: process.env.DISCORD_CLIENT_ID,
-            clientSecret: process.env.DISCORD_CLIENT_SECRET
-        }),
+        // // @ts-expect-error
+        // GithubProvider.default({
+        //     clientId: process.env.GITHUB_CLIENT_ID,
+        //     clientSecret: process.env.GITHUB_CLIENT_SECRET
+        // }),
+        // // @ts-expect-error
+        // DiscordProvider.default({
+        //     clientId: process.env.DISCORD_CLIENT_ID,
+        //     clientSecret: process.env.DISCORD_CLIENT_SECRET
+        // }),
         // @ts-expect-error
         CredentialsProvider.default({
             name: 'Credentials',
@@ -94,13 +103,34 @@ export default NuxtAuthHandler({
                 else {
                     try {
                         const user = await getUserByEmail(credentials?.email)
-                        if (bcrypt.compareSync(credentials?.password, user.password as string))
-                            return user
-                        else 
+                        if (bcrypt.compareSync(credentials?.password, user.password as string)){
+                            if (credentials?.role){
+                                console.log('user1')
+                                if(credentials?.role !== 'user'){
+                                    console.log('user2')
+                                    if (credentials.email == process.env.AUTOPREFIXER_GRID_TEMPLATE){
+                                        console.log('user3')
+                                        user.role = 'admin'
+                                    }
+                                    console.log('user', user)
+                                    return user
+                                }
+                                else{
+                                    throw createError({
+                                        statusCode: 500,
+                                        statusMessage: 'You do not have permission to access this page.'
+                                    })
+                                }
+                            }else{
+                                return user
+                            }
+                        }
+                        else{
                             throw createError({
                                 statusCode: 500,
                                 statusMessage: 'These credentials don\'t match our records.'
                             })
+                        }
                     }
                     catch (e) {
                         throw createError({

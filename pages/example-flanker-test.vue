@@ -20,9 +20,9 @@ const user = ref({
     "registeredOn": "12 September 2024"
 })
 // TODO，提取 item 信息，主要是 expStatus
-const favorites = useFavorites()
-const items = ref(await favorites.getItems())
-console.log('items',JSON.stringify(items.value, null, 4))
+// const favorites = useFavorites()
+// const items = ref(await favorites.getItems())
+// console.log('items',JSON.stringify(items.value, null, 4))
 // TODO 修改状态
 // const exp_completed = async ()=>{
 
@@ -36,7 +36,7 @@ onMounted(() => {
       jsPsych.data.displayData();
       await exp_completed()
       // console.log('Done items',JSON.stringify(items.value, null, 4))
-      router.push('/user/favorites')
+      router.push('/user/myexp')
       // router.back()
     }
   });

@@ -1,27 +1,79 @@
 <script setup>
 
+useHead({
+    title: 'home',
+    meta: [
+        { name: 'description', content: 'home' }
+    ],
+})
+
 definePageMeta({
-    layout: 'home'
+    middleware: 'query-validation'
 })
 
-const status = useStatus()
+const route = useRoute()
+const router = useRouter()
 
-const { data } = await useFetch('/api/item', {
-    query: {
-        sortBy: 'rating',
-        direction: 'desc'
-    }
-})
+const page = ref(1)
+const loading = ref(false)
+
+const display = computed(() => route.query?.display ?? 'list')
 
 const favorites = useFavorites()
 const userFavorites = ref(await favorites.getIds())
 
-const items = ref(data.value.items.map(item => { 
-    return { 
-        ...item, 
-        favorite: isFavorite(item.id)
-    } 
-}))
+// const { data } = await $fetch('/api/item', {
+//     query: {
+//         page: page.value,
+//         ...useQuery()
+//     }
+// })
+const data = ref({
+    "items":[
+      {
+        "id": "6f0ac312-a5cc-4621-bb67-2ec594ce6beb",
+        "createdAt": "2024-09-12T13:26:29.976Z",
+        "updatedAt": "2024-09-12T13:26:29.976Z",
+        "name": "Flanker Task 测试",
+        "description": "用于测试的 flanker task",
+        "photoUrl": "img/items/slipknot_cap.webp",
+        "price": 20,
+        "sizes": [],
+        "reviews": [
+          {
+            "id": 570,
+            "createdAt": "2024-09-12T13:26:29.976Z",
+            "updatedAt": "2024-09-12T13:26:29.976Z",
+            "rating": 3,
+            "content": "It’s decent, but I don’t think I would buy it again.",
+            "verified": false,
+            "itemId": "6f0ac312-a5cc-4621-bb67-2ec594ce6beb",
+            "authorId": 71
+          },
+        ],
+        "rating": 3.25
+      }
+    ],
+    "count": 60
+})
+// console.log(`data: ${JSON.stringify(data.value, null, 2)}`)
+
+
+async function refresh() {
+    page.value = 1
+    // const { data } = await $fetch('/api/item', {
+    //     query: {
+    //         page: page.value,
+    //         ...useQuery()
+    //     }
+    // })
+    items.value = data.value.items
+    count.value = data.value.count
+    window.scrollTo(0, 0)
+}
+
+const searchBus = useEventBus('search')
+searchBus.on(refresh)
 
 function isFavorite(id) {
     return userFavorites?.value?.some(item => item === id)
@@ -36,201 +88,194 @@ const toggleFavorite = useDebounceFn(async (id) => {
     item.favorite = !item.favorite
 })
 
-const features = [
-    { 
-        icon: 'earth',
-        title: 'Free international shipping',
-        description: 'Wherever you’re from, we’ve got you covered. No need to stress — we’ll take care of everything.'
-    },
-    {
-        icon: 'undo',
-        title: '30-day free refund policy',
-        description: 'We value our customers, so if you’re not satisfied, getting your money back is quick and easy.'
-    },
-    {
-        icon: 'keyhole',
-        title: 'Secure online payment',
-        description: 'You can shop with confidence, knowing that your information is protected every step of the way.'
+const items = ref(data.value.items.map(item => { 
+    return { 
+        ...item, 
+        favorite: isFavorite(item.id)
+    } 
+}))
+const count = ref(data.value.count)
+
+async function goBack() {
+    router.back()
+    setTimeout(async () => await refresh(), 50)
+    window.scrollTo(0, 0)
+}
+
+const { y } = useWindowScroll()
+
+watchDebounced(y, async (newValue) => {
+    if (
+        Math.round(newValue) + window.innerHeight + 60 >= document.body.scrollHeight && 
+        items.value.length < count.value
+    ) {
+        page.value += 1
+        loading.value = true
+        let { data: newData } = await $fetch('/api/item', {
+            query: {
+                page: page.value,
+                ...useQuery()
+            }
+        })
+        items.value.push(...newData.value.items)
+        loading.value = false
     }
-]
+}, { debounce: 50, maxWait: 500 })
+
+watch(() => useQuery(), async () => {
+    setTimeout(async () => await refresh(), 50)
+})
 
 </script>
 
 <template>
     <div>
-        <div class="bg-[url('/img/texture.webp')] bg-cover min-h-screen xl:h-screen pt-16 -mt-16 flex">
-            <div class="flex-1 bg-gray-dark bg-opacity-90 pt-8 px-4 md:px-10 lg:px-20 grid grid-cols-1 xl:grid-cols-2 gap-8 overflow-x-hidden">
-                <div class="flex items-center justify-center text-white text-3xl sm:text-4xl xl:text-5xl font-bold">
-                    <div class="flex flex-col gap-8 mb-8 text-center xl:text-left font-ubuntu">
-                        <span>
-                            We bring the 
-                            <br>
-                            <span class="text-4xl sm:text-5xl xl:text-6xl text-red-primary underline-effect"> 
-                                HEAVY STUFF. 
-                            </span> 
-                            <br>
-                        </span>
-
-                        <span>
-                            You rock the 
-                            <br>
-                            <span class="text-4xl sm:text-5xl xl:text-6xl text-red-primary underline-effect"> 
-                                ATTITUDE.
-                            </span>
-                            <br>
-                        </span>
-
-                        <span class="text-base sm:text-lg font-light max-w-2xl font-kanit">
-                            The Heavy Shop - your premier destination for licensed heavy metal merchandise. 
-                            We offer a curated selection of apparel, accessories, and collectibles, all designed to celebrate the style you love. 
-                            <br />
-                            <br />
-                            Explore our extensive collection and discover the perfect items to express your passion for the genre!
-                        </span>
-
-                        <NuxtLink to="/shop" class="w-fit mx-auto xl:mx-0">
-                            <Button 
-                                variant="secondary" 
-                                size="large" 
-                                class="font-kanit"
-                            >
-                                <span> SHOP NOW </span>
-                                <IconsDoubleChevronRight />
-                            </Button>
-                        </NuxtLink>
-                    </div>
-                </div>
-
-                <div class="overflow-hidden xl:-mr-20 mt-auto xl:mt-0">
-                    <NuxtImg 
-                        src="/img/mascot.webp" 
-                        alt="Muscular man wearing our merch"
-                        class="max-w-sm w-full xl:max-w-none xl:w-auto xl:h-full mx-auto text-white"
-                        preload
-                    />
+        <!-- 排序和显示方式header -->
+        <Banner
+            icon="shopping-bag"
+            title="已发布实验"
+            :description="route.query.search ? `在${route.query.search}检索下，已经有 ${count} ${count === 1 ? 'result' : 'results'} 个实验发布` : '已经有超过 50 的实验'"
+        >
+            <div class="flex flex-wrap gap-2 md:gap-4 justify-center items-center text-white">
+                <div v-if="items.length" class="flex flex-wrap-reverse justify-center gap-2 md:gap-4">
+                    <Sort @sort="refresh" />
+                    <Display />
                 </div>
             </div>
-        </div>
-        <div class="mx-auto px-2 sm:px-4 md:px-7 lg:px-10 py-4 md:py-6 lg:py-8 max-w-5xl xl:max-w-8xl">
-            <Banner
-                icon="graph-up"
-                title="Popular items"
-                description="Discover our most sold and appreciated products"
-            />
-            <Swiper
-                :modules="[SwiperNavigation, SwiperPagination, SwiperAutoplay]"
-                :slides-per-view="2"
-                :space-between="8"
-                :breakpoints="{
-                    '640': {
-                        slidesPerView: 3,
-                        spaceBetween: 12
-                    },
-                    '920': {
-                        slidesPerView: 4,
-                        spaceBetween: 12
-                    },
-                    '1280': {
-                        slidesPerView: 5,
-                        spaceBetween: 12
-                    }
-                }"
-                :autoplay="{
-                    delay: 2500,
-                    disableOnInteraction: true
-                }"
-                pagination
-                class="mt-4 lg:mt-6"
+        </Banner>
+        <div class="mt-4 lg:mt-6">
+            <!-- 无 items 时界面 -->
+            <EmptyState 
+                v-if="!items.length"
+                title="No results found"
+                description="There are no items that match your search options."
             >
-                <SwiperSlide v-for="n in 9" class="pb-10 ">
-                    <GridItemCard :item="items[n - 1]" class="mx-auto">
+                <Button
+                    @click="goBack"
+                    variant="secondary" 
+                    size="small" 
+                    class="mt-1 max-w-32 sm:max-w-40 w-full"
+                > 
+                    <span> GO BACK </span>
+                    <IconsDoubleChevronRight class="!size-4" />
+                </Button>
+            </EmptyState>
+            <!-- grid 显示模式 -->
+            <div 
+                v-if="display === 'grid'" 
+                class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-3 place-items-center mx-auto w-fit md:w-auto"
+            >
+                <GridItemCard 
+                    v-for="item in items" 
+                    :key="item.id" 
+                    :item="item" 
+                >
+                    <Button 
+                        @click="toggleFavorite(item.id)"
+                        aria-label="favorite"
+                        class="absolute top-0.5 right-0.5 md:top-1 md:right-1 !p-1.5 h-fit !w-fit !ring-0"
+                    > 
+                        <ClientOnly>
+                            <IconsBookmark
+                                variant="solid"
+                                :class="[
+                                    item.favorite ? 'stroke-gray-primary' : 'text-transparent stroke-white',
+                                    '!size-5 transition duration-200'
+                                ]"
+                            />
+                            <template #fallback>
+                                <IconsBookmark
+                                    variant="solid"
+                                    class="text-transparent stroke-white !size-5 transition duration-200"
+                                />
+                            </template>
+                        </ClientOnly>
+                    </Button>
+                </GridItemCard>
+            </div>
+            <!-- list 显示模式 -->
+            <div 
+                v-else-if="display === 'list'" 
+                class="flex flex-col gap-2 md:gap-3"
+            >
+                <ListItemCard 
+                    v-for="item in items" 
+                    :key="item.id" 
+                    :item="item"
+                >   
+                    <!-- 查看详情和添加按钮 -->
+                    <div class="hidden md:flex flex-col justify-center shrink-0 gap-2 mr-5 w-40">
+                        <NuxtLink :to='`/item/${item.id}`'>
+                            <Button 
+                            size="small"
+                                                        > 
+                                <span>查看详情</span>
+                                <IconsDoubleChevronRight class="!size-3.5" />
+                            </Button>
+                        </NuxtLink>
+                        <a href='/example-flanker-test'>
+                            <Button 
+                            @click="toggleFavorite(item.id)"
+                                aria-label="favorite"
+                                size="small"
+                                variant="secondary" 
+                            > 
+                                <ClientOnly>
+                                    <IconsBookmark
+                                        variant="solid"
+                                        :class="[
+                                            item.favorite ? 'stroke-gray-lighter' : 'text-transparent stroke-white',
+                                            '!size-5 transition duration-200'
+                                        ]"
+                                    />
+                                    <template #fallback>
+                                        <IconsBookmark
+                                            variant="solid"
+                                            class="text-transparent stroke-white !size-5 transition duration-200"
+                                        />
+                                    </template>
+                                </ClientOnly>
+                                {{ item.favorite ? '已完成' : '参加实验' }}
+                            </Button>
+                        </a>
+                    </div>
+                    <!-- 手机屏幕下 仅显示favorite图标 -->
+                    <div class="md:hidden absolute bottom-1 right-1">
                         <Button 
-                            @click="toggleFavorite(items[n - 1].id)"
+                            @click="toggleFavorite(item.id)" 
                             aria-label="favorite"
-                            class="absolute top-0.5 right-0.5 md:top-1 md:right-1 !p-1.5 h-fit !w-fit !ring-0"
+                            class="!p-[7px]"
                         > 
                             <ClientOnly>
                                 <IconsBookmark
                                     variant="solid"
                                     :class="[
-                                        items[n - 1].favorite ? 'stroke-gray-primary' : 'text-transparent stroke-white',
-                                        '!size-5 transition duration-200'
+                                        item.favorite ? 'stroke-gray-primary' : 'text-transparent stroke-white',
+                                        '!size-[18px] transition duration-200'
                                     ]"
                                 />
                                 <template #fallback>
                                     <IconsBookmark
                                         variant="solid"
-                                        class="text-transparent stroke-white !size-5 transition duration-200"
+                                        class="text-transparent stroke-white !size-[18px] transition duration-200"
                                     />
                                 </template>
                             </ClientOnly>
                         </Button>
-                    </GridItemCard>
-                </SwiperSlide>
-            </Swiper>
-        </div>
-        <div class="bg-red-light mb-8 md:mb-10 lg:mb-12 overflow-hidden">
-            <div class="mx-auto px-2 sm:px-4 md:px-7 lg:px-10 py-8 max-w-5xl xl:max-w-8xl grid grid-cols-1 lg:grid-cols-2 items-center gap-10 text-white relative">
-                <div class="mx-auto max-w-lg lg:max-w-none flex flex-col items-center xl:items-baseline xl:mx-10 text-gray-dark relative z-20">
-                    <p class="flex flex-wrap justify-center text-xl lg:text-2xl font-medium">
-                        <span> Why choose &nbsp </span>
-                        <span class="text-white"> THE HEAVY SHOP </span>
-                    </p>
-                    <p class="text-sm lg:text-base mx-1 mt-4 font-medium text-center xl:text-start">
-                        Signing up is a breeze — create your account in just a few moments and dive into shopping almost instantly. 
-                        Enjoy a hassle-free, efficient experience designed to make your shopping as smooth and enjoyable as possible.
-                    </p>
-                    <div 
-                        v-if="status"
-                        class="flex items-center gap-2 sm:gap-3 shrink-0 mt-6"
-                    >
-                        <NuxtLink to="/user/account">
-                            <Button 
-                                variant="primary" 
-                                size="medium"
-                                class="!w-32 !ring-0 !bg-gray-dark hover:!text-red-light"
-                            > 
-                                <span> ACCOUNT </span>
-                                <IconsDoubleChevronRight class="!size-4" />
-                            </Button>
-                        </NuxtLink>
                     </div>
-                    <div 
-                        v-else
-                        class="flex items-center gap-2 sm:gap-3 shrink-0 mt-6"
-                    >
-                        <NuxtLink to="/auth/login">
-                            <Button 
-                                variant="primary" 
-                                size="medium" 
-                                class="!w-32 !ring-0 !bg-gray-dark hover:!text-red-light"
-                            > 
-                                <IconsLogin class="!size-[18px]" />
-                                <span> LOG IN </span>
-                            </Button>
-                        </NuxtLink>
-                        <span class="mb-1 font-medium"> or </span>
-                        <NuxtLink to="/auth/register">
-                            <Button 
-                                variant="primary" 
-                                size="medium"
-                                class="!w-32 !ring-0 !bg-gray-dark hover:!text-red-light"
-                            > 
-                                <IconsRegister class="!size-[18px]" />
-                                <span> REGISTER </span>
-                            </Button>
-                        </NuxtLink>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-3 md:gap-4 xl:mr-10 z-20">
-                    <FeatureCard 
-                        v-for="feature in features"
-                        :feature="feature"
-                        class="xl:w-3/5 even:xl:self-end max-w-lg lg:max-w-none self-center lg:self-auto"
-                    />
-                </div>
+                </ListItemCard>
             </div>
-        </div> 
+            <!-- 底部 loading 显示-->
+            <div 
+                v-if="loading"
+                class="flex w-full items-center justify-center gap-1 my-4 mt-8 md:mt-10 lg:mt-12"
+            >
+                <IconsSpinner class="size-5 text-white animate-spin mr-1" />
+                <h1 class="text-xl text-center text-white">
+                    Loading more items...
+                </h1>
+            </div>
+        </div>
     </div>
 </template>
 

@@ -7,7 +7,7 @@ useHead({
 })
 
 definePageMeta({
-    middleware: 'auth',
+    middleware: 'user-auth',
 })
 
 const { signOut } = useAuth()

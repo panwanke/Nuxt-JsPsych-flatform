@@ -13,7 +13,7 @@ definePageMeta({
 const { signOut } = useAuth()
 
 const user = ref((await useFetch('/api/user')).data.value)
-
+console.log('user', user.value)
 const toast = useToast()
 const bus = useEventBus('modal')
 const target = ref()
@@ -65,18 +65,22 @@ const uploadFile = useDebounceFn(async () => {
 
 <template>
     <div>
+        <!-- 只在删除账号时有用 -->
         <ConfirmationModal
             title="Are you sure you want to delete your account?"
             description="This action is irreversible."
             @confirm="deleteAccount"
         />
+        <!-- banner -->
         <Banner 
             icon="user"
             title="Account"
             description="Manage your user settings and data"
         />
+        <!-- 用户信息 -->
         <div class="mt-4 lg:mt-6 flex p-6 rounded-2xl bg-gray-dark">
             <div class="flex flex-col items-center w-full">
+                <!-- 头像 -->
                 <div class="group shrink-0 relative flex rounded-full">
                     <NuxtImg
                         :src="user.photoUrl ?? '/img/avatar.webp'" 
@@ -131,6 +135,7 @@ const uploadFile = useDebounceFn(async () => {
                         <IconsSpinner class="animate-spin text-white !size-8 md:!size-11" />
                     </div>
                 </div>
+                <!-- 用户信息 -->
                 <div class="mt-4 flex flex-col gap-2 items-center w-full text-white">
                     <p class="text-2xl md:text-3xl"> 
                         {{ user.name }}
@@ -156,6 +161,7 @@ const uploadFile = useDebounceFn(async () => {
                         </p>
                     </div>
                 </div>
+                <!-- signout update password delete account-->
                 <div class="grid grid-cols-1 w-full xs:max-w-96 md:w-auto md:max-w-none md:grid-cols-3 gap-4 mt-4">
                     <Button 
                         size="medium"

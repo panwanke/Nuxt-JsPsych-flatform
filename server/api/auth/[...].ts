@@ -67,14 +67,14 @@ export default NuxtAuthHandler({
         },
         async jwt({ token, user }) {
             if (user) {
-              // 初次登录时，将 user.role 保存到 JWT 中
-              token.role = user.role;
+                // 确保 user.role 存在，并且是合法的值
+                token.role = user.role || 'user';  // 默认赋值为 'user'，如果角色未定义
             }
             return token;
         },
         async session({ session, token }) {
             // 将 JWT 中的 role 传递到 session 中
-            session.user.role = token.role;
+            session.user.role = (token.role as 'admin' | 'manager' | 'user') || 'user';  // 默认值为 'user'
             return session;
         }
     },

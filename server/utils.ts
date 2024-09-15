@@ -12,6 +12,7 @@ async function getUserByEmail(email: string | null | undefined) {
                 id: true,
                 name: true,
                 email: true,
+                role: true,
                 photoUrl: true,
                 createdAt: true
             }

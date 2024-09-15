@@ -20,6 +20,7 @@ const email = ref('test@theheavyshop.com')
 const password = ref('password')
 const errorMessage = ref()
 const loading = ref(false)
+const role = ref('user')
 
 async function login(provider) {
     if (provider === 'credentials') {
@@ -28,6 +29,7 @@ async function login(provider) {
         const { error } = await signIn('credentials', {
             email: email.value,
             password: password.value,
+            role: role.value,
             redirect: false
         })
         errorMessage.value = error
@@ -92,7 +94,7 @@ async function login(provider) {
                 </Button>
             </div>
         </form>
-        <div class="mt-6 flex flex-col items-center">
+        <!-- <div class="mt-6 flex flex-col items-center">
             <p class="text-white text-sm font-extralight my-1"> 
                 Or log in using 
             </p>
@@ -112,7 +114,7 @@ async function login(provider) {
                     <IconsDiscord />
                 </button>
             </div>
-        </div>
+        </div> -->
         <Label class="mt-6 !ml-0 flex flex-wrap items-center justify-center gap-1">
             <span> Don't have an account yet? </span>
             <NuxtLink to="/auth/register" class="font-normal text-red-primary hover:underline">

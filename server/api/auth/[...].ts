@@ -3,8 +3,8 @@ import bcrypt from 'bcrypt'
 import prisma from '~/server/utils'
 import { NuxtAuthHandler } from '#auth'
 
-import GithubProvider from 'next-auth/providers/github'
-import DiscordProvider from 'next-auth/providers/discord'
+// import GithubProvider from 'next-auth/providers/github'
+// import DiscordProvider from 'next-auth/providers/discord'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
 async function getUserByEmail(email: string | null | undefined) {
@@ -64,22 +64,39 @@ export default NuxtAuthHandler({
             }
 
             return true
+        },
+        async jwt({ token, user }) {
+            if (user) {
+              // 初次登录时，将 user.role 保存到 JWT 中
+              token.role = user.role;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            // 将 JWT 中的 role 传递到 session 中
+            session.user.role = token.role;
+            return session;
         }
     },
     providers: [
-        // @ts-expect-error
-        GithubProvider.default({
-            clientId: process.env.GITHUB_CLIENT_ID,
-            clientSecret: process.env.GITHUB_CLIENT_SECRET
-        }),
-        // @ts-expect-error
-        DiscordProvider.default({
-            clientId: process.env.DISCORD_CLIENT_ID,
-            clientSecret: process.env.DISCORD_CLIENT_SECRET
-        }),
+        // // @ts-expect-error
+        // GithubProvider.default({
+        //     clientId: process.env.GITHUB_CLIENT_ID,
+        //     clientSecret: process.env.GITHUB_CLIENT_SECRET
+        // }),
+        // // @ts-expect-error
+        // DiscordProvider.default({
+        //     clientId: process.env.DISCORD_CLIENT_ID,
+        //     clientSecret: process.env.DISCORD_CLIENT_SECRET
+        // }),
         // @ts-expect-error
         CredentialsProvider.default({
             name: 'Credentials',
+            // credentials: {
+            //     email: { label: 'email', type: 'text' },
+            //     password: { label: 'password', type: 'password' },
+            //     role: { label: 'role', type: 'text' }
+            // },            
             async authorize(credentials: any) {
                 if (!credentials?.email)
                     throw createError({
@@ -94,13 +111,21 @@ export default NuxtAuthHandler({
                 else {
                     try {
                         const user = await getUserByEmail(credentials?.email)
-                        if (bcrypt.compareSync(credentials?.password, user.password as string))
-                            return user
-                        else 
-                            throw createError({
+                        if (bcrypt.compareSync(credentials?.password, user.password as string)) {
+                            if (credentials.role === "user" || credentials.role === user.role) {
+                              return user;
+                            } else {
+                              throw createError({
                                 statusCode: 500,
-                                statusMessage: 'These credentials don\'t match our records.'
-                            })
+                                statusMessage: 'You are not authorized to access this page.',
+                              });
+                            }
+                          } else {
+                            throw createError({
+                              statusCode: 500,
+                              statusMessage: 'Your password was incorrect.',
+                            });
+                          }
                     }
                     catch(e) {
                         throw createError({

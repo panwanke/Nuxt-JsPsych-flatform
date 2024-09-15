@@ -9,10 +9,19 @@ export default defineNuxtConfig({
     }
   },
 
-  googleFonts: {
-    families: {
-      Kanit: [200, 300, 400, 500],
-      Ubuntu: [400, 700]
+  // googleFonts: {
+  //   families: {
+  //     Kanit: [200, 300, 400, 500],
+  //     Ubuntu: [400, 700]
+  //   }
+  // },
+
+  auth: {
+    provider: {
+      type: 'authjs',
+      trustHost: false,
+      defaultProvider: 'credentials',
+      addDefaultCallbackUrl: true
     }
   },
 
@@ -64,7 +73,6 @@ export default defineNuxtConfig({
     '@nuxt/image',
     'nuxt-swiper',
     '@nuxtjs/robots',
-    '@nuxtjs/google-fonts',
     '@unlok-co/nuxt-stripe'
   ],
 

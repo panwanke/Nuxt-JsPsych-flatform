@@ -9,7 +9,7 @@ definePageMeta({
     middleware: 'admin-auth',
     auth: {
         unauthenticatedOnly: true,
-        navigateAuthenticatedTo: '/',
+        navigateAuthenticatedTo: '/dashboard',
     },
 })
 

@@ -1,5 +1,6 @@
 // 一个类似的 auth 中间件逻辑示例
 export default defineNuxtRouteMiddleware(async (to, from) => {
+  
   const { getSession } = useAuth();
   const session = await getSession();
   // const userinfo = { 
@@ -8,15 +9,20 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   //     role: 'user' 
   // }
   // const session = { user: userinfo }
-  console.log('admin-auth session', session)
-  // console.log('redirect', !session)
-  // console.log('redirect', Object.keys(session).length === 0)
+  // const session = {}
+  console.log('admin-auth session', session, to?.path, from?.path)
   
-  // 如果没有 session，则重定向到登录页
-  if (Object.keys(session).length === 0 && to.path !== "/auth/admin-login") {
-    return navigateTo('/auth/admin-login');
-  }else{
-    if(session?.user && session.user.role =="user"){
+  // 没有登陆信息，去 login 页面
+  if (Object.keys(session).length === 0) {
+    // 去 dashboard 等需要管理员权限的页面
+    if (to.path !== "/auth/admin-login"){
+      console.log('navigateTo /auth/admin-login')
+      return navigateTo('/auth/admin-login');
+    }
+  }
+  else{
+    // 有登陆信息，且是用户权限
+    if(session?.user && session.user.role ==="user"){
       console.log('detect a user log in dashboard', session)
       throw createError({
         statusCode: 500,
@@ -24,8 +30,13 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         message: 'User not allowed to access this page'
       })
     }
-    else if (to.path !== "/dashboard"){
-      return navigateTo('/dashboard');
+    // 有登陆信息，且是管理员
+    else if (from.path !== "/dashboard"){
+        console.log('navigateTo /dashboard')
+        return navigateTo("/dashboard");
     }
+    // else{
+    //   console.log('Unexpected navigation scenario. Staying on current page.');
+    // }
   }
 });

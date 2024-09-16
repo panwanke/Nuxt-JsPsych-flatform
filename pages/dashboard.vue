@@ -39,6 +39,30 @@ const items = ref([])
 
 // const createUser = async () => {
 //   // 跳转或弹出用户创建表单
+// async function createUser(data: any) {
+//     await prisma.user.create({
+//         data: {
+//             name: data.name,
+//             photoUrl: data.image,
+//             email: data.email,
+//             password: bcrypt.hashSync(crypto.randomBytes(32).toString('hex'), 10),
+//             favorites: {
+//                 create: {
+//                     items: {
+//                         create: []
+//                     }
+//                 }
+//             },
+//             cart: {
+//                 create: {
+//                     entries: {
+//                         create: []
+//                     }
+//                 }
+//             }
+//         }
+//     })
+// }
 // }
 
 // const createItem = async () => {

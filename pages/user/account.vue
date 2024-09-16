@@ -13,7 +13,7 @@ definePageMeta({
 const { signOut } = useAuth()
 
 const user = ref((await useFetch('/api/user')).data.value)
-console.log('user', user.value)
+console.log('accout user', user.value)
 const toast = useToast()
 const bus = useEventBus('modal')
 const target = ref()

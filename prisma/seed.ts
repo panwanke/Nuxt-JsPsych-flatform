@@ -47,7 +47,7 @@ async function main() {
         },
     })
 
-    for (let i = 1; i <= 99; i++) {
+    for (let i = 1; i <= 2; i++) {
         await prisma.user.create({
             data: {
                 email: faker.internet.email(),
@@ -73,9 +73,9 @@ async function main() {
     }
 
     for (const product of products) {
-        const n = faker.number.int({ min: 0, max: 20 })
+        const n = faker.number.int({ min: 0, max: 2 })
         const template = () => {
-            const index = faker.number.int({ min: 0, max: 99 })
+            const index = faker.number.int({ min: 0, max: 1 })
         return {
                 rating: reviews[index].rating,
                 content: reviews[index].content,

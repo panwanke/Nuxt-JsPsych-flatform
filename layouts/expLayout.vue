@@ -1,25 +1,19 @@
 <template>
-  <!-- <SearchModal />
-  <Header /> -->
-  <div id="app-layout">
-    <slot />
+  <div class="h-screen flex flex-col bg-gray-dark shadow-lg">
+    <Header />
+    <div id="nuxt-jspsych-container" class="flex flex-grow bg-white mx-auto w-full px-2 sm:px-4 md:px-7 lg:px-10 max-w-5xl xl:max-w-8xl text-base md:text-xl lg:text-2xl 2xl:text-3xl">
+      <slot />
+    </div>
+    <Footer />
   </div>
-  <Footer />
 </template>
+
 
 <script lang="ts" setup>
 useHead({
-  // title: '测试实验：Flanker Test',
-  // meta: [
-  //   { name: 'description', content: '用于测试 jspsych (CDN) 在 nuxt 框架中的可用性' }
-  // ],
-  // bodyAttrs: {
-  //   class: 'test'
-  // },
   script: [
     { src: 'https://unpkg.com/jspsych@8.0.0' },
     { src: 'https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0' },
-    { src: 'https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0' },
     { src: 'https://unpkg.com/@jspsych/plugin-preload@2.0.0' },
   ],
   link: [
@@ -30,9 +24,4 @@ useHead({
     },
   ],
 })
-
 </script>
-
-<style>
-
-</style>

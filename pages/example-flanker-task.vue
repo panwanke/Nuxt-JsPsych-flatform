@@ -1,8 +1,4 @@
-<template>
-  <div>
-  </div>
-</template>
-
+<template></template>
 
 <script setup>
 
@@ -10,31 +6,30 @@ definePageMeta({
     layout: 'exp-layout'
 })
 
+useHead({
+  script: [
+    { src: 'https://unpkg.com/@panwanke/jspsych-html-keynbutton-response@2.0.1' },
+  ],
+})
+
 const router = useRouter()
-// const uesr = ref(useFetch('api/user').data.value)
 const user = ref({
     "id": 1,
     "name": "Test Account",
-    "email": "test@theheavyshop.com",
+    "email": "test@psyexp.com",
     "photoUrl": null,
     "registeredOn": "12 September 2024"
 })
-// TODO，提取 item 信息，主要是 expStatus
-// const favorites = useFavorites()
-// const items = ref(await favorites.getItems())
-// console.log('items',JSON.stringify(items.value, null, 4))
-// TODO 修改状态
-// const exp_completed = async ()=>{
 
-// }
- 
+
 onMounted(() => {
   //初始化jsPsych
   const jsPsych = initJsPsych({
     use_webaudio: false,
+    display_element: "nuxt-jspsych-container",
     on_finish: async()=> {
       jsPsych.data.displayData();
-      await exp_completed()
+      // await exp_completed()
       // console.log('Done items',JSON.stringify(items.value, null, 4))
       router.push('/user/myexp')
       // router.back()
@@ -78,7 +73,7 @@ onMounted(() => {
   const practice_trials = {
     timeline: [
       {
-        type: jsPsychHtmlKeyboardResponse,
+        type: jsPsychHtmlKeyAndButtonPlugin,
         stimulus: jsPsych.timelineVariable('stimulus'),
         choices: ['arrowleft', 'arrowright'],
         trial_duration: 1500,
@@ -105,7 +100,7 @@ onMounted(() => {
 
   // 正式实验
   const test_trials = {
-    type: jsPsychHtmlKeyboardResponse,
+    type: jsPsychHtmlKeyAndButtonPlugin,
     stimulus: jsPsych.timelineVariable('stimulus'),
     choices: ['arrowleft', 'arrowright'],
     trial_duration: 1500,
@@ -143,7 +138,7 @@ onMounted(() => {
   const timeline = [
     instructions, 
     practice_trials, 
-    // test_procedure, 
+    test_procedure, 
     debrief_block];
 
   // 初始化实验

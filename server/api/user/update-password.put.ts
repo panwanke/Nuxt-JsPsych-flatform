@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
             statusCode: 400,
             statusMessage: 'The passwords do not match.'
         })
-    else if (session?.user?.email === 'test@theheavyshop.com')
+    else if (session?.user?.email === 'test@psyexp.com')
         throw createError({
             statusCode: 400,
             statusMessage: 'You are not authorized to update the password for this account.'

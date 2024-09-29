@@ -13,7 +13,7 @@ definePageMeta({
     },
 })
 
-const email = ref('test@theheavyshop.com')
+const email = ref('test@psyexp.com')
 const password = ref('password')
 const role = ref('admin')
 const errorMessage = ref('')

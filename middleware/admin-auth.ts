@@ -5,7 +5,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const session = await getSession();
   // const userinfo = { 
   //     name: 'Test Account', 
-  //     email: 'test@theheavyshop.com', 
+  //     email: 'test@psyexp.com', 
   //     role: 'user' 
   // }
   // const session = { user: userinfo }

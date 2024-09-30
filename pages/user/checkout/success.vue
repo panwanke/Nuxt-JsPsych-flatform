@@ -17,10 +17,10 @@ definePageMeta({
         <div class="mb-6">
             <h1 class="text-center text-[#51ad3d] text-2xl sm:text-[26px] font-medium mb-4 flex gap-1 items-center justify-center">
                 <IconsCheck class="!size-7" />
-                <span> Payment successful </span>
+                <span> 实验成功完成 </span>
             </h1>
             <p class="text-center text-white font-extralight text-sm">
-                Thank you for your purchase! We'll send you a confirmation email with the details of your order.
+                感谢您的参与！
             </p>
         </div>
         <NuxtLink 
@@ -28,7 +28,7 @@ definePageMeta({
             class="w-full"
         >
             <Button class="hover:!ring-[#51ad3d]">
-                <span> GO BACK </span>
+                <span> 返回 </span>
                 <IconsDoubleChevronRight class="!size-4" />
             </Button>
         </NuxtLink>

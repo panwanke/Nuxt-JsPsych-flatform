@@ -1,7 +1,9 @@
 import { PrismaClient } from '@prisma/client'
+// import prisma from "~/lib/prisma";
 import { faker } from '@faker-js/faker'
 import bcrypt from 'bcrypt'
 
+// const prisma = usePrismaClient()
 const prisma = new PrismaClient()
 
 const reviews = [
@@ -53,7 +55,8 @@ async function main() {
                 email: faker.internet.email(),
                 name: faker.person.fullName(),
                 password: bcrypt.hashSync('password', 10),
-                photoUrl: faker.image.avatarGitHub(),
+                photoUrl: "/img/avatar.webp",
+                // photoUrl: faker.image.avatarGitHub(),
                 favorites: {
                     create: {
                         items: {
@@ -87,16 +90,16 @@ async function main() {
         let itemReviews = []
         for (let j = 1; j <= n; j++)
             itemReviews.push(template() as any)
-
+        
         await prisma.item.create({
             data: {
                 name: product.name,
                 description: `Officially licensed ${product.name} featuring an exclusive, high-quality design. Crafted with premium materials for superior comfort and durability.`,
                 price: product.price,
                 photoUrl: product.photoUrl,
-                reviews: {
-                    create: itemReviews
-                },
+                // reviews: {
+                //     create: itemReviews
+                // },
                 sizes: (product as any).sizes ? (product as any).sizes : ['S', 'M', 'L', 'XL', '2XL']
             }
         })

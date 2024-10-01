@@ -25,6 +25,10 @@ export default defineNuxtConfig({
     }
   },
 
+  prisma: {
+    installStudio: false,
+  },
+
   app: {
     head: {
       htmlAttrs: {
@@ -56,7 +60,7 @@ export default defineNuxtConfig({
     '@vue-email/nuxt',
     '@vueuse/nuxt',
     '@nuxt/image',
-    'nuxt-swiper',
+    '@prisma/nuxt',
     '@nuxtjs/robots'
   ],
 

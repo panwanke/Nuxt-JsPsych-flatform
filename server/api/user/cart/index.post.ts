@@ -1,4 +1,4 @@
-import prisma, { getUserByEmail } from '~/server/utils'
+import { getUserByEmail } from '~/server/utils'
 import { getServerSession } from '#auth'
 
 export default defineEventHandler(async (event) => {

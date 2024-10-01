@@ -1,6 +1,7 @@
-import { PrismaClient, Item } from '@prisma/client'
-const prisma = new PrismaClient()
-export default prisma
+// import { PrismaClient, Item } from '@prisma/client'
+// const prisma = new PrismaClient()
+// const prisma = usePrismaClient()
+import prisma from "~/lib/prisma";
 
 async function getUserByEmail(email: string | null | undefined) {
     try {

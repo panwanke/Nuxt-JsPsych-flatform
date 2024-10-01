@@ -9,19 +9,3 @@
 </template>
 
 
-<script lang="ts" setup>
-useHead({
-  script: [
-    { src: 'https://unpkg.com/jspsych@8.0.0' },
-    { src: 'https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0' },
-    { src: 'https://unpkg.com/@jspsych/plugin-preload@2.0.0' },
-  ],
-  link: [
-    {
-      href: 'https://unpkg.com/jspsych@8.0.0/css/jspsych.css',
-      rel: 'stylesheet',
-      type: 'text/css',
-    },
-  ],
-})
-</script>

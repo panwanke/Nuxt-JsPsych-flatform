@@ -45,6 +45,7 @@ const data = ref({
             "createdAt": "2024-09-12T13:26:29.976Z",
             "updatedAt": "2024-09-12T13:26:29.976Z",
             "rating": 3,
+            "photoUrl": "img/avatar.webp",
             "content": "It’s decent, but I don’t think I would buy it again.",
             "verified": false,
             "itemId": "6f0ac312-a5cc-4621-bb67-2ec594ce6beb",
@@ -54,7 +55,7 @@ const data = ref({
         "rating": 3.25
       }
     ],
-    "count": 60
+    "count": 1
 })
 // console.log(`data: ${JSON.stringify(data.value, null, 2)}`)
 
@@ -134,11 +135,12 @@ watch(() => useQuery(), async () => {
         <Banner
             icon="shopping-bag"
             title="已发布实验"
-            :description="route.query.search ? `在${route.query.search}检索下，已经有 ${count} ${count === 1 ? 'result' : 'results'} 个实验发布` : '已经有超过 50 的实验'"
+            :description="route.query.search ? `在${route.query.search}检索下，已经有 ${count} ${count === 1 ? 'result' : 'results'} 个实验发布` : `已经发布 ${count} 项实验`"
         >
+            <!-- 显示排序和切换list grid模型 -->
             <div class="flex flex-wrap gap-2 md:gap-4 justify-center items-center text-white">
                 <div v-if="items.length" class="flex flex-wrap-reverse justify-center gap-2 md:gap-4">
-                    <Sort @sort="refresh" />
+                    <!-- <Sort @sort="refresh" /> -->
                     <Display />
                 </div>
             </div>

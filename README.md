@@ -1,6 +1,4 @@
-# Nuxt 3 Minimal Starter
-
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+# Nuxt 3 + JsPsych Experimental Flatform
 
 ## Setup
 
@@ -33,3 +31,8 @@ pnpm run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Acknowledgements
+
+- [Nuxt 3 project](https://github.com/JellyGamez/The-Heavy-Shop)
+- [Nuxt + JsPsych](https://github.com/ayugioh2003/psycho-test/)

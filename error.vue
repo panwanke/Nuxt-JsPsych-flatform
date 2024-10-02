@@ -1,7 +1,7 @@
 <script setup>
 
 useHead({
-    title: 'Error - The Heavy Shop',
+    title: 'Error',
 })
 
 const props = defineProps({

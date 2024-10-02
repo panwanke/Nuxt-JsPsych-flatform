@@ -26,3 +26,6 @@ logs
 # datasets
 data
 test.*
+
+lib
+TODO.md

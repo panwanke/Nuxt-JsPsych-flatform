@@ -27,6 +27,7 @@ module.exports = {
         '8xl' : '90rem',
       },
       screens: {
+        xxs : '0px',
         xs : '480px'
       },
       fontFamily: {

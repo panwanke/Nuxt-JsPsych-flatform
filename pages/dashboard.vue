@@ -1,32 +1,58 @@
 <template>
-  <div class="dashboard">
-    <h1>Admin Dashboard</h1>
+  <div class="flex h-screen">
+    <!-- 左侧导航栏 -->
+    <nav class="w-1/4 mt-20 mb-[45px] bg-gray-800 text-white p-4">
+      <ul>
+        <li 
+          class="py-2 px-4 hover:bg-gray-700 cursor-pointer"
+          :class="{ 'bg-gray-700': currentTab === 'experiment' }"
+          @click="currentTab = 'experiment'"
+        >
+          实验信息表
+        </li>
+        <li 
+          class="py-2 px-4 hover:bg-gray-700 cursor-pointer"
+          :class="{ 'bg-gray-700': currentTab === 'user' }"
+          @click="currentTab = 'user'"
+        >
+          用户信息表
+        </li>
+      </ul>
+    </nav>
 
-    <section>
-      <h2>Users Management</h2>
-      <!-- <UserTable :users="users" @refresh="fetchUsers" />
-      <button @click="createUser">Add New User</button> -->
-    </section>
-
-    <section>
-      <h2>Items Management</h2>
-      <!-- <ItemTable :items="items" @refresh="fetchItems" />
-      <button @click="createItem">Add New Item</button> -->
-    </section>
+    <!-- 右侧内容区域 -->
+    <div class="flex-1 p-4">
+      <section v-if="currentTab === 'experiment'">
+        <ExpTableManager />
+      </section>
+      <section v-if="currentTab === 'user'">
+        <UserTableManager />
+      </section>
+    </div>
+    <!-- <div class="flex-1 p-4">
+      <UserTableManager />
+    </div> -->
   </div>
 </template>
 
 <script setup>
-// import UserTable from '~/components/UserTable.vue'
-// import ItemTable from '~/components/ItemTable.vue'
 
 definePageMeta({
-  middleware: 'admin-auth'
+    layout: 'dashboard',
 })
 
-const users = ref([])
-const items = ref([])
+// 懒加载组件
+const UserTableManager = defineAsyncComponent(() => import('@/components/UserTableManager.vue'));
+const ExpTableManager = defineAsyncComponent(() => import('@/components/ExpTableManager.vue'));
 
+// 当前选中的标签，默认是 'experiment'
+const currentTab = ref('experiment');
+
+// definePageMeta({
+//   middleware: 'admin-auth'
+// })
+
+const users = ref([])
 // const fetchUsers = async () => {
 //   const { data } = await $fetch('/api/user') // 根据你现有的 API 路径
 //   users.value = data.value || []

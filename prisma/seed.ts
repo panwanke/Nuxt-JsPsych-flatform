@@ -6,20 +6,14 @@ import bcrypt from 'bcrypt'
 // const prisma = usePrismaClient()
 const prisma = new PrismaClient()
 
-const reviews = [
-    { rating: 5, content: "Absolutely love it! The fit is perfect and the material is super soft." },
-    { rating: 4, content: "Good quality, but I wish the color was a bit more vibrant." },
-    { rating: 5, content: "Exceeded my expectations! Will definitely be buying more in different colors." },
-    { rating: 3, content: "It’s comfortable, but the size runs a bit small." },
-    { rating: 1, content: "Terrible fit. It was too tight and uncomfortable. Would not recommend." }
-]
-  
-const products = [
-    { name: 'Kreator men\'s T-Shirt',                   photoUrl: 'img/items/kreator.webp',          price: 19.99 },
-    { name: 'Mayhem men\'s T-Shirt',                    photoUrl: 'img/items/mayhem.webp',           price: 19.99 }
-]
 
 async function main() {
+    // 清除数据库中的现有数据
+    // await prisma.user.deleteMany({});
+    // await prisma.experiment.deleteMany({});
+    // await prisma.userExperiment.deleteMany({});
+    // await prisma.review.deleteMany({});
+
     await prisma.user.upsert({
         where: {
             email: 'test@psyexp.com',
@@ -32,78 +26,73 @@ async function main() {
             name: 'Test Account',
             role: 'admin',
             password: bcrypt.hashSync('password', 10),
-            favorites: {
-                create: {
-                    items: {
-                        create: []
-                    }
-                },
-            },
-            cart: {
-                create: {
-                    entries: {
-                        create: []
-                    }
-                },
-            },
+            institution: 'Test Institution',
+            age: 20,
+            gender: 'male',
         },
     })
-
-    for (let i = 1; i <= 2; i++) {
-        await prisma.user.create({
-            data: {
-                email: faker.internet.email(),
-                name: faker.person.fullName(),
-                password: bcrypt.hashSync('password', 10),
-                photoUrl: "/img/avatar.webp",
-                // photoUrl: faker.image.avatarGitHub(),
-                favorites: {
-                    create: {
-                        items: {
-                            create: []
-                        }
-                    },
-                },
-                cart: {
-                    create: {
-                        entries: {
-                            create: []
-                        }
-                    },
-                },
-            },
-        })
-    }
-
-    for (const product of products) {
-        const n = faker.number.int({ min: 0, max: 2 })
-        const template = () => {
-            const index = faker.number.int({ min: 0, max: 1 })
-        return {
-                rating: reviews[index].rating,
-                content: reviews[index].content,
-                verified: faker.datatype.boolean(),
-                authorId: faker.number.int({ min: 2, max: 100 })
-            }
-        }
-        
-        let itemReviews = []
-        for (let j = 1; j <= n; j++)
-            itemReviews.push(template() as any)
-        
-        await prisma.item.create({
-            data: {
-                name: product.name,
-                description: `Officially licensed ${product.name} featuring an exclusive, high-quality design. Crafted with premium materials for superior comfort and durability.`,
-                price: product.price,
-                photoUrl: product.photoUrl,
-                // reviews: {
-                //     create: itemReviews
-                // },
-                sizes: (product as any).sizes ? (product as any).sizes : ['S', 'M', 'L', 'XL', '2XL']
-            }
-        })
-    }
+    
+    enum Gender {
+        male = 'male',
+        female = 'female',
+        other = 'other',
+      }
+    // 创建用户
+    const users = Array.from({ length: 10 }, () => ({
+        name: faker.system.fileName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        role: 'user',
+        institution: faker.company.name(),
+        age: faker.number.int({ min: 18, max: 65 }),
+        gender: faker.helpers.arrayElement(Object.values(Gender)),
+    }));
+    
+    const createdUsers = await prisma.user.createMany({ data: users });
+    
+    // 创建实验
+    const experiments = Array.from({ length: 5 }, () => ({
+        name: faker.commerce.productName(),
+        description: faker.commerce.productDescription(),
+        // photoUrl: faker.image.imageUrl(),
+        photoUrl: "/img/avatar.webp",
+        price: parseFloat(faker.commerce.price()),
+        slug: faker.helpers.slugify(faker.commerce.product()),
+        remuneration: parseFloat(faker.finance.amount()),
+        startDate: faker.date.past(),
+        endDate: faker.date.future(),
+    }));
+    
+    const createdExperiments = await prisma.experiment.createMany({ data: experiments });
+    
+    // 创建用户和实验的关联
+    const userExperiments = createdUsers.count
+        .toString()
+        .split('')
+        .map((_, index) => ({
+        userId: index + 1,
+        experimentId: faker.number.int({ min: 1, max: createdExperiments.count }),
+        isAdded: faker.datatype.boolean(),
+        isDone: faker.datatype.boolean(),
+        }));
+    
+    await prisma.userExperiment.createMany({ data: userExperiments });
+    
+    // 创建评论
+    const reviews = createdUsers.count
+        .toString()
+        .split('')
+        .map((_, index) => ({
+        rating: faker.number.int({ min: 1, max: 5 }),
+        content: faker.lorem.sentence(),
+        verified: faker.datatype.boolean(),
+        experimentId: faker.number.int({ min: 1, max: createdExperiments.count }),
+        authorId: index + 1,
+        }));
+    
+    await prisma.review.createMany({ data: reviews });
+    
+    console.log('Seeding complete.');
 }
 
 main()

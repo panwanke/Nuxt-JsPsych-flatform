@@ -3,10 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL")
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
 }
 
+enum Gender {
+  male
+  female
+  other
+}
 model User {
   id                 Int        @id @default(autoincrement())
   createdAt          DateTime   @default(now())
@@ -17,66 +22,53 @@ model User {
   password           String
   passwordResetToken String?
   photoUrl           String?
-  cart               Cart?
-  favorites          Favorites?
   reviews            Review[]
+  institution        String?
+  age                Int?
+  gender             Gender
+
+  UserExperiment UserExperiment[]
 }
 
-model Item {
-  id          String       @id @default(uuid())
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  name        String
-  description String
-  photoUrl    String
-  price       Float
-  sizes       String[]
-  reviews     Review[]
-  favorites   Favorites[]  @relation("FavoritesToItem")
-  carts       CartToItem[]
+model Experiment {
+  id             Int              @id @default(autoincrement())
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  name           String
+  description    String
+  photoUrl       String
+  price          Float
+  reviews        Review[]
+  slug           String
+  remuneration   Float
+  startDate      DateTime?
+  endDate        DateTime?
+  UserExperiment UserExperiment[]
 }
 
-model Favorites {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    Int      @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items     Item[]   @relation("FavoritesToItem")
-}
+model UserExperiment {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  experimentId Int
+  user         User       @relation(fields: [userId], references: [id])
+  experiment   Experiment @relation(fields: [experimentId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  isAdded      Boolean    @default(false)
+  isDone       Boolean    @default(false)
 
-model Cart {
-  id        Int          @id @default(autoincrement())
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  userId    Int          @unique
-  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  entries   CartToItem[]
-}
-
-model CartToItem {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  itemId    String
-  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  cartId    Int
-  quantity  Int
-  size      String?
-
-  @@unique([cartId, itemId, size])
+  @@unique([userId, experimentId])
 }
 
 model Review {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  rating    Int
-  content   String
-  verified  Boolean  @default(false)
-  itemId    String
-  authorId  Int
-  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  id           Int        @id @default(autoincrement())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  rating       Int
+  content      String
+  verified     Boolean    @default(false)
+  experimentId Int
+  authorId     Int
+  experiment   Experiment @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+  author       User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }

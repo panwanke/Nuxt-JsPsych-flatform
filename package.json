@@ -4,7 +4,6 @@
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   },
-  "type": "module",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -36,6 +35,7 @@
     "@jspsych/plugin-browser-check": "^2.0.0",
     "@jspsych/plugin-fullscreen": "^2.0.0",
     "@jspsych/plugin-preload": "2.0.0",
+    "@nuxtjs/device": "^3.2.4",
     "@nuxtjs/robots": "^4.1.7",
     "@panwanke/jspsych-html-keynbutton-response": "2.0.1",
     "@prisma/nuxt": "^0.0.35",

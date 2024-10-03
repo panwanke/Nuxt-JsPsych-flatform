@@ -56,6 +56,7 @@ export default defineNuxtConfig({
 
   modules: [
     '@sidebase/nuxt-auth',
+    '@nuxtjs/device',
     'nuxt-headlessui',
     '@vue-email/nuxt',
     '@vueuse/nuxt',

@@ -54,12 +54,12 @@ const currentTab = ref('experiment');
 
 const users = ref([])
 // const fetchUsers = async () => {
-//   const { data } = await $fetch('/api/user') // 根据你现有的 API 路径
+//   const { data } = await useFetch('/api/user') // 根据你现有的 API 路径
 //   users.value = data.value || []
 // }
 
 // const fetchItems = async () => {
-//   const { data } = await $fetch('/api/item') // 根据你现有的 API 路径
+//   const { data } = await useFetch('/api/item') // 根据你现有的 API 路径
 //   items.value = data.value || []
 // }
 

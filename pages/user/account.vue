@@ -19,6 +19,13 @@ const bus = useEventBus('modal')
 const target = ref()
 const loading = ref(false)
 
+function logOut(){
+    console.log('logout')
+    // 好像重定向没用
+    // signOut({ redirect: 'http://localhost:3000/test' })
+    signOut()
+}
+
 async function deleteAccount() {
     await useFetch('/api/user', {
         method: 'DELETE'
@@ -74,8 +81,8 @@ const uploadFile = useDebounceFn(async () => {
         <!-- banner -->
         <Banner 
             icon="user"
-            title="Account"
-            description="Manage your user settings and data"
+            title="账户设置"
+            description="设置账户信息和密码等"
         />
         <!-- 用户信息 -->
         <div class="mt-4 lg:mt-6 flex p-6 rounded-2xl bg-gray-dark">
@@ -154,7 +161,7 @@ const uploadFile = useDebounceFn(async () => {
                     <div>
                         <p class="flex items-center gap-1 text-gray-lightest">
                             <IconsClock class="!size-4 md:!size-5 text-gray-lightest" /> 
-                            <span class="text-sm md:text-base font-light"> Registered on </span>
+                            <span class="text-sm md:text-base font-light"> 注册时间 </span>
                         </p>
                         <p class="text-base md:text-lg">
                             {{ user.registeredOn }}
@@ -162,13 +169,13 @@ const uploadFile = useDebounceFn(async () => {
                     </div>
                 </div>
                 <!-- signout update password delete account-->
-                <div class="grid grid-cols-1 w-full xs:max-w-96 md:w-auto md:max-w-none md:grid-cols-3 gap-4 mt-4">
+                <div class="grid grid-cols-1 w-full xs:max-w-96 md:w-auto md:max-w-none md:grid-cols-2 gap-4 mt-4">
                     <Button 
                         size="medium"
-                        @click="signOut"
+                        @click="logOut"
                     >
                         <IconsLogout class="!size-5" />
-                        <span> LOG OUT </span>
+                        <span> 退出 </span>
                     </Button>
                     <NuxtLink to="/user/update-password">
                         <Button 
@@ -176,16 +183,16 @@ const uploadFile = useDebounceFn(async () => {
                             size="medium"
                         >
                             <IconsKey class="!size-5" />
-                            <span> UPDATE PASSWORD </span>
+                            <span> 修改密码 </span>
                         </Button>
                     </NuxtLink>
-                    <Button 
+                    <!-- <Button 
                         size="medium"
                         @click="bus.emit('confirmation')"
                     >
                         <IconsTrashBin class="!size-5" />
-                        <span> DELETE ACCOUNT </span>
-                    </Button>
+                        <span> 删除账号 </span>
+                    </Button> -->
                 </div>
             </div>
         </div>

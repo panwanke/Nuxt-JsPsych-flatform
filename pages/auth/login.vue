@@ -30,7 +30,7 @@ async function login(provider) {
             email: email.value,
             password: password.value,
             role: role.value,
-            redirect: false
+            redirect: false,
         })
         errorMessage.value = error
         if (error)
@@ -44,6 +44,7 @@ async function login(provider) {
     }
     else {
         localStorage.setItem('syncNeeded', 'true')
+        console.log('登陆后，redirecting...', route?.query?.callbackUrl)
         await signIn(provider, { 
             callbackUrl: route?.query?.callbackUrl,
             external: true

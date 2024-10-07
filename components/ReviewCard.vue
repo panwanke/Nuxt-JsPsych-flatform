@@ -17,13 +17,13 @@ const bus = useEventBus('modal')
                     <div class="flex flex-wrap justify-between w-full gap-3 truncate">
                         <div class="flex items-center gap-2 w-fit">
                             <NuxtImg 
-                                :src="review.author.photoUrl ?? '/img/avatar.webp'" 
+                                :src="review.photoUrl ?? '/img/avatar.webp'" 
                                 alt="avatar"
                                 class="size-9 md:size-11 object-cover rounded-full text-xs" 
                                 preload 
                             />
                             <p class="text-[15px] md:text-base truncate"> 
-                                {{ review.author.name }} 
+                                {{ review.name }} 
                             </p>
                         </div>
                         <div v-if="review.verified" class="flex items-center gap-x-1">

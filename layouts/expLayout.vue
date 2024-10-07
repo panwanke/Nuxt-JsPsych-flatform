@@ -8,4 +8,9 @@
   </div>
 </template>
 
-
+<script steup>
+// 似乎没用 只有定义在实验中
+// definePageMeta({
+//   middleware: ['user-auth']
+// })
+</script>

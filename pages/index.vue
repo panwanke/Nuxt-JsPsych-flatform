@@ -19,55 +19,22 @@ const loading = ref(false)
 
 const display = computed(() => route.query?.display ?? 'list')
 
-const favorites = useFavorites()
-const userFavorites = ref(await favorites.getIds())
 
-// const { data } = await $fetch('/api/item', {
-//     query: {
-//         page: page.value,
-//         ...useQuery()
-//     }
-// })
-const data = ref({
-    "items":[
-      {
-        "id": "6f0ac312-a5cc-4621-bb67-2ec594ce6beb",
-        "createdAt": "2024-09-12T13:26:29.976Z",
-        "updatedAt": "2024-09-12T13:26:29.976Z",
-        "name": "Flanker Task 测试",
-        "description": "用于测试的 flanker task",
-        "photoUrl": "img/items/slipknot_cap.webp",
-        "price": 20,
-        "sizes": [],
-        "reviews": [
-          {
-            "id": 570,
-            "createdAt": "2024-09-12T13:26:29.976Z",
-            "updatedAt": "2024-09-12T13:26:29.976Z",
-            "rating": 3,
-            "photoUrl": "img/avatar.webp",
-            "content": "It’s decent, but I don’t think I would buy it again.",
-            "verified": false,
-            "itemId": "6f0ac312-a5cc-4621-bb67-2ec594ce6beb",
-            "authorId": 71
-          },
-        ],
-        "rating": 3.25
-      }
-    ],
-    "count": 1
+const { data } = await useFetch('/api/exp', {
+    query: {
+        page: page.value,
+        ...useQuery()
+    }
 })
-// console.log(`data: ${JSON.stringify(data.value, null, 2)}`)
-
 
 async function refresh() {
     page.value = 1
-    // const { data } = await $fetch('/api/item', {
-    //     query: {
-    //         page: page.value,
-    //         ...useQuery()
-    //     }
-    // })
+    const { data } = await useFetch('/api/exp', {
+        query: {
+            page: page.value,
+            ...useQuery()
+        }
+    })
     items.value = data.value.items
     count.value = data.value.count
     window.scrollTo(0, 0)
@@ -76,23 +43,23 @@ async function refresh() {
 const searchBus = useEventBus('search')
 searchBus.on(refresh)
 
-function isFavorite(id) {
-    return userFavorites?.value?.some(item => item === id)
-}
+// function isFavorite(id) {
+//     return userExps?.value?.some(item => item === id)
+// }
 
-const toggleFavorite = useDebounceFn(async (id) => {
-    const item = items.value.find(item => item.id === id)
-    if (item.favorite)
-        await favorites.removeItem(id)
-    else
-        await favorites.addItem(id)
-    item.favorite = !item.favorite
-})
+// const toggleFavorite = useDebounceFn(async (id) => {
+//     const item = items.value.find(item => item.id === id)
+//     if (item.favorite)
+//         await favorites.removeItem(id)
+//     else
+//         await favorites.addItem(id)
+//     item.favorite = !item.favorite
+// })
 
 const items = ref(data.value.items.map(item => { 
     return { 
         ...item, 
-        favorite: isFavorite(item.id)
+        favorite: false // TODO
     } 
 }))
 const count = ref(data.value.count)
@@ -112,7 +79,7 @@ watchDebounced(y, async (newValue) => {
     ) {
         page.value += 1
         loading.value = true
-        let { data: newData } = await $fetch('/api/item', {
+        let { data: newData } = await useFetch('/api/exp', {
             query: {
                 page: page.value,
                 ...useQuery()
@@ -207,15 +174,15 @@ watch(() => useQuery(), async () => {
                 >   
                     <!-- 查看详情和添加按钮 -->
                     <div class="hidden md:flex flex-col justify-center shrink-0 gap-2 mr-5 w-40">
-                        <NuxtLink :to='`/item/${item.id}`'>
+                        <NuxtLink :to='`/exp/${item.slug}`'>
                             <Button 
                             size="small"
-                                                        > 
+                            > 
                                 <span>查看详情</span>
                                 <IconsDoubleChevronRight class="!size-3.5" />
                             </Button>
                         </NuxtLink>
-                        <NuxtLink :to='`/item/${item.id}`'>
+                        <NuxtLink :to='`/tasks/${item.slug}`'>
                             <Button 
                             @click="toggleFavorite(item.id)"
                                 aria-label="favorite"

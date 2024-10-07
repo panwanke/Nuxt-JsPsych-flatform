@@ -24,7 +24,7 @@
         <tr v-for="item in paginatedItems" :key="item.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
           <td class="py-4 px-6">{{ item.name }}</td>
           <td class="py-4 px-6">{{ item.description }}</td>
-          <td class="py-4 px-6">{{ item.price }}</td>
+          <td class="py-4 px-6">{{ item.remuneration }}</td>
           <td class="py-2 px-6">
               <div class="flex flex-col justify-center items-center gap-2 !w-14">
                 <button @click="showModal('edit', item)" class="bg-green-500 hover:bg-green-700 text-white font-bold w-full py-[2px] px-2 rounded">
@@ -94,7 +94,7 @@
 
 <script setup>
 // 获取项目信息
-const {data} = await useFetch('/api/item',{
+const {data} = await useFetch('/api/exp',{
   query: {
         sortBy: 'rating',
         direction: 'desc'

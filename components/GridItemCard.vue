@@ -9,7 +9,7 @@ const props = defineProps({
 <template>
     <div class="flex flex-col w-full h-full p-1 lg:p-1.5 gap-2 rounded-2xl max-w-sm text-white bg-gray-dark">
         <div class="relative">
-            <NuxtLink :to='`/item/${item?.id}`'>
+            <NuxtLink :to='`/exp/${item?.slug}`'>
                 <NuxtImg 
                     :src="item?.photoUrl"
                     :alt="item?.name"
@@ -21,7 +21,7 @@ const props = defineProps({
         </div>
         
         <div class="flex flex-col mx-2">
-            <NuxtLink :to='`/item/${item?.id}`'>
+            <NuxtLink :to='`/exp/${item?.slug}`'>
                 <p class="font-light text-base md:text-lg h-10 md:h-12 leading-tight md:leading-6 line-clamp-2"> 
                     {{ item?.name }} 
                 </p>
@@ -29,7 +29,7 @@ const props = defineProps({
             <div class="justify-self-end flex flex-wrap-reverse justify-between items-center w-full gap-2 mt-2">
                 <div class="text-sm md:text-base mt-[1px] md:mt-0">
                     <span class="font-extralight">$</span>
-                    <span> {{ item?.price }} </span>
+                    <span> {{ item?.remuneration }} </span>
                 </div>
                 <div class="flex items-center mb-0.5 gap-1 md:gap-1.5">
                     <Rating :rating="item?.rating" />
@@ -41,7 +41,7 @@ const props = defineProps({
         </div>
 
         <div class="flex items-end h-full">
-            <NuxtLink :to='`/item/${item.id}`' class="w-full">
+            <NuxtLink :to='`/exp/${item.slug}`' class="w-full">
                 <Button 
                     size="small"
                     class="!text-xs sm:!text-sm"

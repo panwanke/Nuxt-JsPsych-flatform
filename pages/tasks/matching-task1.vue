@@ -5,32 +5,35 @@
 const { isMobile } = useDevice()
 const { $initJsPsych, $HtmlKeyAndButtonPlugin, $fullscreen, $browserCheck } = useNuxtApp()
 import "assets/css/countDown.css"
+import "jspsych/css/jspsych.css"
 import { DesignGenerator, BrowserCheck,HtmlGenerator } from "~/utils/jsPsychUtiles";
+
 
 definePageMeta({
   layout: 'exp-layout',
+  middleware: ['user-auth'],
 })
 
 useHead({
   title: '知觉匹配任务',
-  link: [
-    {
-      href: 'https://unpkg.com/jspsych@8.0.0/css/jspsych.css',
-      rel: 'stylesheet',
-      type: 'text/css',
-    },
-  ],
+  // link: [
+  //   {
+  //     href: 'https://unpkg.com/jspsych@8.0.0/css/jspsych.css',
+  //     rel: 'stylesheet',
+  //     type: 'text/css',
+  //   },
+  // ],
 })
+
 const router = useRouter()
 
-const user = ref()
-// user = await useFetch('/api/user').data.value
-if (!user.value) {
-  user.value = {
-    "name": "您"
-  }
-}
-const userId = 1
+// const { data } = useAuth()
+// console.log('data222', data.value)
+// const user = await getUserByEmail(data?.value.user?.email)
+const { data }  = await useFetch('/api/user')
+// console.log('user222', data.value)
+const userId = data.value.id
+
 
 // 定义实验设计
 const keyBalance = [
@@ -99,22 +102,22 @@ onMounted(() => {
     display_element: "nuxt-jspsych-container",
     on_finish: async () => {
       jsPsych.data.displayData();
-      // const exp_data = jsPsych.data.get().json()
-      // const { data, error } = await useFetch('/api/upload-exp-data', {
-      //     method: 'POST',
-      //     body: {
-      //       file_name: 'test_exp_data',
-      //       exp_data: exp_data
-      //     },
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     }
-      // });
+      const exp_data = jsPsych.data.get().json()
+      const { data, error } = await useFetch('/api/upload-exp-data', {
+          method: 'POST',
+          body: {
+            file_name: `${userId || "test"}_matching-task1`,
+            exp_data: exp_data
+          },
+          headers: {
+            'Content-Type': 'application/json'
+          }
+      });
       // console.log('uploading status', data.value, error.value)
       // await exp_completed()
       // console.log('Done items',JSON.stringify(items.value, null, 4))
-      // router.push('/user/myexp')
-      router.push('/matching-task1')
+      router.push('/user/myexp')
+      // router.push('/matching-task1')
       // router.back()
     }
   });
@@ -153,15 +156,17 @@ onMounted(() => {
         let str = `
           <div class="px-2 xxs:px-5 mx-auto">
           <p class="text-center text-red-primary text-[1.2em] pb-2">欢迎您参加知觉${session=="matchness"?"匹配":"判断"}任务实验。</p>
-          <p>在接下来的任务中，你将看到一排图形(圆形●或方形■)。</p>`
+          <p>在接下来的任务中，你将看到一排图形。</p>
+          <p>(圆形●或方形■)</p>`
         if (session=="matchness"){
-          str += `<p>你需要专注于中间的图形，判断中间的图形和两侧的图形是否相同或匹配。</p><p>如果图形${keyMap.label[0]=="match"?"匹配":"不匹配"}，请按“${keyMap.key[0]}”；
-          如果图形${keyMap.label[1]=="match"?"匹配":"不匹配"}，请按“${keyMap.key[1]}”。</p>
+          str += `<p>你需要专注于中间的图形，判断中间的图形和两侧的图形是否相同或匹配。</p>
+          <p>如果图形${keyMap.label[0]=="match"?"匹配":"不匹配"}，请按“${keyMap.key[0]}”；</p>
+          <p>如果图形${keyMap.label[1]=="match"?"匹配":"不匹配"}，请按“${keyMap.key[1]}”。</p>
           `
         }else{
           str += `<p>你的任务是忽略两侧的图形，专注于中间的图形。</p>
-          <p>如果中间的图形是${keyMap.label[0]}，请按“${keyMap.key[0]}”；
-          如果是${keyMap.label[1]}，请按“${keyMap.key[1]}”。</p>`
+          <p>如果中间的图形是${keyMap.label[0]}，请按“${keyMap.key[0]}”；</p>
+          <p>如果是${keyMap.label[1]}，请按“${keyMap.key[1]}”。</p>`
         }
         str += `<p>请尽量又快又准地做出反应。</p>
         <p>请按空格键开始练习。</p>

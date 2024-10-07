@@ -92,13 +92,13 @@ export class BrowserCheck {
   rule: { rule: string; message: string; }[];
   isContinue: boolean;
   outMessage: string;
-  browserInfo: {};
+  DeviceInfo: {};
   
   constructor(rule: { rule: string; message: string; }[]) {
     this.rule = rule
     this.isContinue = true
     this.outMessage = ""
-    this.browserInfo = {}
+    this.DeviceInfo = {}
   }
 
   checkRule(data: {}) {
@@ -138,7 +138,7 @@ export class BrowserCheck {
     //   // ... 这里可以添加对对象的处理逻辑，如果需要的话
     // }
 
-    this.browserInfo = data;
+    this.DeviceInfo = data;
     return this.isContinue;
   }
 

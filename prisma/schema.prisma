@@ -7,11 +7,6 @@ datasource db {
   url      = env("POSTGRES_PRISMA_URL")
 }
 
-enum Gender {
-  male
-  female
-  other
-}
 model User {
   id                 Int        @id @default(autoincrement())
   createdAt          DateTime   @default(now())
@@ -25,7 +20,7 @@ model User {
   reviews            Review[]
   institution        String?
   age                Int?
-  gender             Gender
+  gender             String?
 
   UserExperiment UserExperiment[]
 }
@@ -37,9 +32,8 @@ model Experiment {
   name           String
   description    String
   photoUrl       String
-  price          Float
   reviews        Review[]
-  slug           String
+  slug           String           @unique
   remuneration   Float
   startDate      DateTime?
   endDate        DateTime?
@@ -54,11 +48,13 @@ model UserExperiment {
   experiment   Experiment @relation(fields: [experimentId], references: [id])
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
-  isAdded      Boolean    @default(false)
   isDone       Boolean    @default(false)
+  DeviceInfo  Json?
+  expData      Json?
 
   @@unique([userId, experimentId])
 }
+
 
 model Review {
   id           Int        @id @default(autoincrement())

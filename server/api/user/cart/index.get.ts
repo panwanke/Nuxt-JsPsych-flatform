@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
     if (sortBy === 'rating')
         entries?.sort((a: any, b: any) => direction === 'asc' ? a.item.rating - b.item.rating : b.item.rating - a.item.rating)
     else if (sortBy === 'price')
-        entries?.sort((a: any, b: any) => direction === 'asc' ? a.item.price * a.quantity - b.item.price * b.quantity : b.item.price * b.quantity - a.item.price * a.quantity)
+        entries?.sort((a: any, b: any) => direction === 'asc' ? a.item.remuneration * a.quantity - b.item.remuneration * b.quantity : b.item.remuneration * b.quantity - a.item.remuneration * a.quantity)
 
     return entries
 })

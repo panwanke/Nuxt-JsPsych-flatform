@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import bcrypt from 'bcrypt'
+import prisma from '~/lib/prisma'
 
 import { NuxtAuthHandler } from '#auth'
 
@@ -9,11 +10,12 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 
 async function getUserByEmail(email: string | null | undefined) {
     try {
-        return await prisma.user.findUniqueOrThrow({
+        const user = await prisma.user.findUniqueOrThrow({
             where: {
                 email: email as string
             }
         })
+        return user
     }
     catch(e) { 
         throw createError({
@@ -30,20 +32,6 @@ async function createUser(data: any) {
             photoUrl: data.image,
             email: data.email,
             password: bcrypt.hashSync(crypto.randomBytes(32).toString('hex'), 10),
-            favorites: {
-                create: {
-                    items: {
-                        create: []
-                    }
-                }
-            },
-            cart: {
-                create: {
-                    entries: {
-                        create: []
-                    }
-                }
-            }
         }
     })
 }
@@ -53,6 +41,7 @@ export default NuxtAuthHandler({
     callbacks: {
         async signIn({ user, account, profile }) {
             try {
+                // console.log('user3',user, account, profile)
                 await getUserByEmail(user.email)
             }
             catch(e) {
@@ -64,6 +53,10 @@ export default NuxtAuthHandler({
             }
 
             return true
+        },
+        async redirect({ url, baseUrl }) {
+            // console.log('redirect to', url)
+            return url.replace(':3001', ':3000');
         },
         async jwt({ token, user }) {
             if (user) {
@@ -110,7 +103,9 @@ export default NuxtAuthHandler({
                     })
                 else {
                     try {
+                        // console.log('user1', credentials?.email)
                         const user = await getUserByEmail(credentials?.email)
+                        // console.log('user2',user, credentials?.email)
                         if (bcrypt.compareSync(credentials?.password, user.password as string)) {
                             if (credentials.role === "user" || credentials.role === user.role) {
                               return user;
@@ -139,7 +134,7 @@ export default NuxtAuthHandler({
     ],
     pages: {
         signIn: '/auth/login',
-        signOut: '/',
+        // signOut: '/',
         newUser: '/',
         error: '/error',
         verifyRequest: '/'

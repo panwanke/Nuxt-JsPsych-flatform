@@ -1,6 +1,3 @@
--- CreateEnum
-CREATE TYPE "Gender" AS ENUM ('male', 'female', 'other');
-
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
@@ -14,7 +11,7 @@ CREATE TABLE "User" (
     "photoUrl" TEXT,
     "institution" TEXT,
     "age" INTEGER,
-    "gender" "Gender" NOT NULL,
+    "gender" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -27,7 +24,6 @@ CREATE TABLE "Experiment" (
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "photoUrl" TEXT NOT NULL,
-    "price" DOUBLE PRECISION NOT NULL,
     "slug" TEXT NOT NULL,
     "remuneration" DOUBLE PRECISION NOT NULL,
     "startDate" TIMESTAMP(3),
@@ -45,6 +41,8 @@ CREATE TABLE "UserExperiment" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "isAdded" BOOLEAN NOT NULL DEFAULT false,
     "isDone" BOOLEAN NOT NULL DEFAULT false,
+    "DeviceInfo" JSONB,
+    "expData" JSONB,
 
     CONSTRAINT "UserExperiment_pkey" PRIMARY KEY ("id")
 );

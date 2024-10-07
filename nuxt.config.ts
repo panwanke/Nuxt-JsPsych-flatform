@@ -17,11 +17,17 @@ export default defineNuxtConfig({
   // },
 
   auth: {
+    isEnabled: true,
+    disableServerSideAuth: false,
     provider: {
       type: 'authjs',
       trustHost: false,
       defaultProvider: 'credentials',
-      addDefaultCallbackUrl: true
+      addDefaultCallbackUrl: true,
+    },
+    sessionRefresh: {
+      enablePeriodically: true,
+      enableOnWindowFocus: true,
     }
   },
 
@@ -48,9 +54,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    authSecret: process.env.AUTH_SECRET || 'epool-secret-key', 
     public: {
-      authOrigin: process.env.AUTH_ORIGIN,
-      perPage: 20
+      perPage: 10
     }
   },
 

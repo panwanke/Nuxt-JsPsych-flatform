@@ -17,12 +17,6 @@ const items = ref(await userExp.getItems())
 console.log('items',items.value)
 
 
-
-const removeItem = useDebounceFn(async (id) => {
-    await ExpAdded.removeItem(id)
-    items.value = await ExpAdded.getItems()
-})
-
 </script>
 
 <template>
@@ -77,13 +71,14 @@ const removeItem = useDebounceFn(async (id) => {
                                         <IconsDoubleChevronRight class="!size-3.5" />
                                     </Button>
                                 </NuxtLink>
-                                <Button 
-                                    @click="removeItem(item.id)"
-                                    size="small" 
-                                    > 
-                                    <IconsTrashBin class="!size-5" />
-                                    <span> 已选择(点击退出) </span>
-                                </Button>
+                                <NuxtLink :to='`/exp/${item?.slug}`'>
+                                    <Button 
+                                        size="small" 
+                                        > 
+                                        <IconsTrashBin class="!size-5" />
+                                        <span> 查看详情 </span>
+                                    </Button>
+                                </NuxtLink>
                             </div>
                         </div>
                         <div class="md:hidden absolute bottom-1 right-1">

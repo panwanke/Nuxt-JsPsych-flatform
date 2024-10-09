@@ -14,6 +14,7 @@ definePageMeta({
 })
 
 const route = useRoute()
+const router = useRouter()
 const { signIn } = useAuth()
 
 const name = ref('')
@@ -46,9 +47,13 @@ async function register() {
         })
         localStorage.setItem('syncNeeded', 'true')
         localStorage.setItem('newAccount', 'true')
-        await navigateTo(route?.query?.callbackUrl, {
-            external: true
-        })
+        if (route?.query?.callbackUrl) {
+            console.log('to callback route',route)
+            router.push(route?.query?.callbackUrl)
+        } else{
+            console.log('to login',route)
+            router.push('/auth/login')
+        }
     }
 }
 

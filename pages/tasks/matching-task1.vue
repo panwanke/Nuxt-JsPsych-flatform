@@ -1,11 +1,17 @@
 <template></template>
 
+<style scoped>
+@import 'assets/css/countDown.css';
+@import 'assets/css/matching-task.css';
+@import 'jspsych/css/jspsych.css';
+</style>
+
 <script setup>
 
 const { isMobile } = useDevice()
 const { $initJsPsych, $HtmlKeyAndButtonPlugin, $fullscreen, $browserCheck } = useNuxtApp()
-import "assets/css/countDown.css"
-import "jspsych/css/jspsych.css"
+// import "assets/css/countDown.css"
+// import "jspsych/css/jspsych.css"
 import { DesignGenerator, BrowserCheck,HtmlGenerator } from "~/utils/jsPsychUtiles";
 import { useToast } from 'vue-toastification'
 
@@ -163,7 +169,7 @@ const stimHtmlFunc = (input) => {
   const otherOptionKey = target === '圆' ? '方' : '圆';
   const flankerStim = ismatch === 'match' ? targetStim : stimOptions[otherOptionKey];
 
-  const stim_html = `<div class="flex flex-row xxs:w-[200px] xs:w-[230px] sm:w-[250px] md:w-[350px] lg:w-[400px] pb-8 md:pd-20 justify-evenly items-center">${flankerStim}${targetStim}${flankerStim}</div>`;
+  const stim_html = `<div class="flex flex-row stim-length pb-8 md:pd-20 justify-evenly items-center">${flankerStim}${targetStim}${flankerStim}</div>`;
 
   return stim_html;
 };
@@ -537,6 +543,12 @@ onMounted(() => {
       )
     ])
   });
+  timeline.push({
+    type: $HtmlKeyAndButtonPlugin,
+    stimulus: stimHtmlFunc(stim_design[0]),
+    choices: ["q","p"],
+    button_html: htmlGenerator.generateButton
+  })
   timeline.push(
     end_instruc,
     exit_fullscreen
@@ -554,126 +566,3 @@ onMounted(() => {
 //   })
 // })
 </script>
-
-<style scoped>
-body {
-  /* 隐藏鼠标 */
-  /* cursor: none;   */
-  /* 隐藏文本光标或插入符 */
-  caret-color: transparent;
-}
-
-
-@media (max-width: 640px) {
-  p {
-    font-size: 1.3rem;
-    line-height: 1.5rem;
-  }
-}
-@media (min-width: 640px) {
-  p {
-    font-size: 1.8rem;
-    line-height: 2.3rem;
-  }
-}
-@media (min-width: 768px) {
-  p {
-    font-size: 2rem;
-    line-height: 2.5rem;
-  }
-}
-@media (min-width: 1024px) {
-  p {
-    font-size: 2rem;
-    line-height: 2.5rem;
-  }
-}
-@media (min-width: 1280px) {
-  p {
-    font-size: 2rem;
-    line-height: 2.5rem;
-  }
-}
-
-.circle{
-  --tw-bg-opacity: 1;
-  --c-wh-400: 4em;
-  --c-wh-640: 5.5em;
-  --c-wh-768: 5.2em;
-  --c-wh-1024: 5em;
-  --c-wh-1280: 6em;
-  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
-  border-radius: 9999px;
-}
-@media (max-width: 640px) {
-  .circle {
-    width: var(--c-wh-400);
-    height: var(--c-wh-400);
-  }
-}
-@media (min-width: 640px) {
-  .circle {
-    width: var(--c-wh-640);
-    height: var(--c-wh-640);
-  }
-}
-@media (min-width: 768px) {
-  .circle {
-    width: var(--c-wh-768);
-    height: var(--c-wh-768);
-  }
-}
-@media (min-width: 1024px) {
-  .circle {
-    width: var(--c-wh-1024);
-    height: var(--c-wh-1024);
-  }
-}
-@media (min-width: 1280px) {
-  .circle {
-    width: var(--c-wh-1280);
-    height: var(--c-wh-1280);
-  }
-}
-
-.square{
-  --tw-bg-opacity: 1;
-  --s-wh-400: 3.7em;
-  --s-wh-640: 5.2em;
-  --s-wh-768: 4.9em;
-  --s-wh-1024: 4.8em;
-  --s-wh-1280: 5.8em;
-  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
-}
-@media (max-width: 640px) {
-  .square {
-    width: var(--s-wh-400);
-    height: var(--s-wh-400);
-  }
-}
-@media (min-width: 640px) {
-  .square {
-    width: var(--s-wh-640);
-    height: var(--s-wh-640);
-  }
-}
-@media (min-width: 768px) {
-  .square {
-    width: var(--s-wh-768);
-    height: var(--s-wh-768);
-  }
-}
-@media (min-width: 1024px) {
-  .square {
-    width: var(--s-wh-1024);
-    height: var(--s-wh-1024);
-  }
-}
-@media (min-width: 1280px) {
-  .square {
-    width: var(--s-wh-1280);
-    height: var(--s-wh-1280);
-  }
-}
-
-</style>

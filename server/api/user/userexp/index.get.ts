@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
     const user = await getUserByEmail(session?.user?.email)
     // if (!user?.id) return []
     // const user = { id: 1}
-    console.log('user',user)
+    // console.log('user',user)
 
     const { sortBy, direction } = getQuery(event)
 

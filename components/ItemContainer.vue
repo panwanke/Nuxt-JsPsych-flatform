@@ -69,14 +69,19 @@ const task_path = ref(route.path.replace('/exp/','/tasks/'))
             </div>
             <!-- 按钮 -->
             <div class="flex flex-row xl:flex-col xl:justify-around gap-4 xl:gap-0 h-full">
-                <NuxtLink :to="task_path" class="w-full">
+                <NuxtLink 
+                    :to="task_path"
+                    :tag="item.isDone ? 'span' : 'a'"
+                    class="w-full"
+                    :class="{ disabled: item.isDone }"
+                >
                     <Button
                         size="medium"
                         variant="secondary"
                         class="xl:h-16"
                         >
                         <IconsShoppingCart class="!size-4 sm:!size-5" />
-                        <span> 现在参与 </span>
+                        <span>  {{ item.isDone? "已完成(无法再次参与)": "现在参与" }}  </span>
                     </Button>
                 </NuxtLink>
 

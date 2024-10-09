@@ -44,6 +44,10 @@ const searchBus = useEventBus('search')
 searchBus.on(refresh)
 
 const items = ref(data.value.items)
+// const items = ref(data.value.items.map(item => ({
+//     ...item,
+//     isDone: true
+// })));
 const count = ref(data.value.count)
 
 async function goBack() {

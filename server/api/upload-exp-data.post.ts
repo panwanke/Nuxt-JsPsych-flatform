@@ -1,39 +1,50 @@
 // server/api/upload-exp-data.ts
-// import { defineEventHandler, readBody, createError } from 'h3';
 import { promises as fs } from 'fs';
 import { resolve } from 'path';
+import { defineEventHandler, readBody } from 'h3';
+
+// Helper function to save JSON data
+async function saveJson(fileName: string, data: any) {
+  const filePath = resolve('data', `${fileName}.json`);
+  await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+// Helper function to save CSV data
+async function saveCsv(fileName: string, data: any) {
+  const filePath = resolve('data', `${fileName}.csv`);
+  await fs.writeFile(filePath, data, 'utf-8');
+}
 
 export default defineEventHandler(async (event) => {
+  // Read the body of the request
+  const body = await readBody(event);
+
+  // Expecting a structure like { file_name: 'example', exp_data: {...}, type: 'json' or 'csv' }
+  const { file_name, exp_data, type } = body;
+
+  if (!file_name || !exp_data || !type) {
+    return { success: false, message: 'Missing required fields: file_name, exp_data, or type.' };
+  }
+
+  // Ensure the data directory exists
+  const dataDir = resolve('data');
+  try {
+    await fs.mkdir(dataDir, { recursive: true });
+  } catch (error) {
+    return { success: false, message: 'Failed to create data directory.' };
+  }
 
   try {
-    // 读取请求体中的JSON数据
-    const data = await readBody(event);
-    // console.log('upload data',data)
-
-    // 检查是否为JSON数据
-    if (!data || typeof data !== 'object') {
-      throw createError({ statusCode: 400, statusMessage: 'Invalid JSON data' });
+    if (type === 'json') {
+      await saveJson(file_name, exp_data);
+    } else if (type === 'csv') {
+      await saveCsv(file_name, exp_data);
+    } else {
+      return { success: false, message: 'Unsupported file type. Use "json" or "csv".' };
     }
 
-    const file_name = data.file_name;
-    // 将JSON数据转换为字符串
-    const exp_data = JSON.stringify(data.exp_data, null, 2);
-
-    // 指定保存文件的路径
-    const filePath = resolve('data', `${file_name}.json`);
-    // console.log('filePath',filePath)
-
-    // 将数据写入文件
-    await fs.writeFile(filePath, exp_data, 'utf8');
-
-    // 返回成功响应
-    return { 
-      statusCode: 201,
-      message: 'User data uploaded successfully' 
-    };
-  } catch (error) {
-    // 处理错误情况
-    console.error('Error uploading user data:', error);
-    throw createError({ statusCode: 500, statusMessage: 'Internal Server Error' });
+    return { success: true, message: `${file_name}.${type} saved successfully.` };
+  } catch (error:any) {
+    return { success: false, message: `Failed to save file: ${error.message}` };
   }
 });

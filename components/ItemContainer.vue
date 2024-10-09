@@ -87,7 +87,6 @@ const task_path = ref(route.path.replace('/exp/','/tasks/'))
             </div>
             <!-- 按钮 -->
             <div class="flex flex-row xl:flex-col xl:justify-around gap-4 xl:gap-0 h-full">
-                <!-- TODO: change nuxtlink -->
                 <NuxtLink :to="task_path" class="w-full">
                     <Button
                         size="medium"

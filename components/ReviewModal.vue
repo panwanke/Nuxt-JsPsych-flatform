@@ -27,14 +27,14 @@ bus.on(function(event, data) {
 
 async function addReview() {
 	errorMessage.value = null
-    const { error } = await useFetch('/api/review', {
-        method: 'POST',
-        body: {
-            rating: rating.value,
-			review: review.value?.trim(),
-			itemId: itemId.value
-        }
-    })
+	const { error } = await useFetch('/api/review', {
+			method: 'POST',
+			body: {
+					rating: rating.value,
+		review: review.value?.trim(),
+		itemId: itemId.value
+			}
+	})
 	errorMessage.value = error.value?.data.statusMessage
 	if (!error.value) {
 		await refreshNuxtData('item')

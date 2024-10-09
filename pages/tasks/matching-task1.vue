@@ -16,6 +16,10 @@ definePageMeta({
 
 useHead({
   title: '知觉匹配任务',
+  // 添加CDN插件 
+  script: [
+    // { src: "https://unpkg.com/@jspsych/plugin-virtual-chinrest@3.0.0" },
+  ],
   // link: [
   //   {
   //     href: 'https://unpkg.com/jspsych@8.0.0/css/jspsych.css',
@@ -26,13 +30,95 @@ useHead({
 })
 
 const router = useRouter()
+const route = useRoute();
 
+const userId = ref(null);
+const experimentId = ref(null);
+const userExpId = ref(null);
+const taskStarted = ref(false);
+const taskIsDone = ref(false);
+const browserInfo = ref();
+const all_blocks_results = ref([])
+
+// 获取被试 ID
 // const { data } = useAuth()
 // console.log('data222', data.value)
 // const user = await getUserByEmail(data?.value.user?.email)
-const { data }  = await useFetch('/api/user')
-// console.log('user222', data.value)
-const userId = data.value.id
+const { data:user }  = await useFetch('/api/user')
+// console.log('user222', user.value)
+userId.value = user.value.id
+// userId.value = 1;
+
+// 获取实验 ID
+const slug = route.path.split('/').slice(-1)[0];
+// console.log('slug',slug)
+const { data:experiment } = await useAsyncData('exp', () => $fetch(`/api/exp/${slug}`))
+experimentId.value = experiment.value?.id;
+// console.log('experimentId',experimentId.value)
+
+// 创建 UserExperiment 记录
+const startTask = async () => {
+    const { error,data } = await useFetch('/api/userexp', {
+      method: 'POST',
+      body: {
+        userId,
+        experimentId: experimentId.value,
+      },
+    });
+
+    if (error.value) {
+      // await refreshNuxtData('item')
+      console.error(error.value);
+    }
+
+    taskStarted.value = true;
+    userExpId.value = data?.value.id;
+    // console.log('userExpId',userExpId.value)
+};
+await startTask();
+
+// 完成任务，更新 UserExperiment 的 isDone 状态
+const completeTask = async (metaData={}, fileName, jsonData, csvData) => {
+
+  const { error } = await useFetch('/api/userexp', {
+    method: 'PUT',
+    body: {
+      id: userExpId.value,
+      updateData: metaData
+    },
+  });
+  if (error.value) {
+    // await refreshNuxtData('item')
+    console.error(error.value);
+  }
+
+  await useFetch('/api/upload-exp-data', {
+      method: 'POST',
+      body: {
+        file_name: fileName,
+        exp_data: jsonData,
+        type: "json"
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
+  });
+  await useFetch('/api/upload-exp-data', {
+      method: 'POST',
+      body: {
+        file_name: fileName,
+        exp_data: csvData,
+        type: "csv"
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
+  });
+  router.push('/user/myexp')
+  // router.back()
+
+  taskIsDone.value = true;
+};
 
 
 // 定义实验设计
@@ -42,7 +128,7 @@ const keyBalance = [
   {"key": ['q', 'p'],"label": ['match', 'mismatch']},
   {"key": ['q', 'p'],"label": ['mismatch', 'match']},
 ]
-const designGenerator = new DesignGenerator(userId)
+const designGenerator = new DesignGenerator(userId.value)
 const session_design = designGenerator.generateCombo(
   {
     session_order: [["shape", "matchness"], ["matchness", "shape"]],
@@ -63,8 +149,8 @@ const exp_bw_cond = designGenerator.selectCondition(session_design)
 const stimHtmlFunc = (input) => {
 
   const stimOptions = {
-    "圆": `<div class="w-[3.5em] h-[3.5em] md:w-[4em] md:h-[4em] bg-black rounded-full"></div>`,
-    "方": `<div class="w-[3.1em] h-[3.1em] md:w-[3.8em] md:h-[3.8em] bg-black"></div>`,
+    "圆": `<div class="circle"></div>`,
+    "方": `<div class="square"></div>`,
   };
   const { ismatch, target } = input
   const targetStim = stimOptions[target];
@@ -75,7 +161,7 @@ const stimHtmlFunc = (input) => {
 
   return stim_html;
 };
-const stimGenerator = new DesignGenerator(userId)
+const stimGenerator = new DesignGenerator(userId.value)
 let stim_design = stimGenerator.generateCombo({ ismatch: ['mismatch', 'match'], target: ['圆', '方'] })
 // console.log('stim_design',stim_design)
 
@@ -102,23 +188,13 @@ onMounted(() => {
     display_element: "nuxt-jspsych-container",
     on_finish: async () => {
       jsPsych.data.displayData();
-      const exp_data = jsPsych.data.get().json()
-      const { data, error } = await useFetch('/api/upload-exp-data', {
-          method: 'POST',
-          body: {
-            file_name: `${userId || "test"}_matching-task1`,
-            exp_data: exp_data
-          },
-          headers: {
-            'Content-Type': 'application/json'
-          }
-      });
-      // console.log('uploading status', data.value, error.value)
-      // await exp_completed()
-      // console.log('Done items',JSON.stringify(items.value, null, 4))
-      router.push('/user/myexp')
-      // router.push('/matching-task1')
-      // router.back()
+      // const exp_data = jsPsych.data.get().json()
+      const metaData = {
+        isDone: true, 
+        deviceInfo: JSON.stringify(browserInfo?.value ?? "no browser info"),
+        expData: JSON.stringify(all_blocks_results.value)
+      }
+      await completeTask(metaData, `${userId.value || "test"}_matching-task1`, jsPsych.data.get().json(), jsPsych.data.get().csv())
     }
   });
 
@@ -139,6 +215,7 @@ onMounted(() => {
     type: $browserCheck,
     skip_features: ['webaudio', 'webcam', 'microphone', 'mobile'],
     inclusion_function: (data) => {
+      browserInfo.value = data
       const isContinue = BC.checkRule(data)
       return isContinue;
     },
@@ -148,6 +225,12 @@ onMounted(() => {
       return outMessage
     }
   };
+  // var chinrest = {
+  //   type: jsPsychVirtualChinrest,
+  //   blindspot_reps: 3,
+  //   resize_units: "cm",
+  //   pixels_per_unit: 50
+  // };
   // 实验指导语和结束语等
   const instrucGenerator = (keyMap, session)=>{
     return {
@@ -155,7 +238,7 @@ onMounted(() => {
       stimulus: () => {
         let str = `
           <div class="px-2 xxs:px-5 mx-auto">
-          <p class="text-center text-red-primary text-[1.2em] pb-2">欢迎您参加知觉${session=="matchness"?"匹配":"判断"}任务实验。</p>
+          <p class="text-center text-red-primary pb-3">欢迎您参加知觉${session=="matchness"?"匹配":"判断"}任务实验。</p>
           <p>在接下来的任务中，你将看到一排图形。</p>
           <p>(圆形●或方形■)</p>`
         if (session=="matchness"){
@@ -203,14 +286,13 @@ onMounted(() => {
     choices: [" "],
     button_html: htmlGenerator.generateButton,
     on_finish: () => {
-      console.log('all_blocks_results',all_blocks_results)
+      console.log('all_blocks_results',all_blocks_results.value)
     }
   };
 
   /**============================================
    *               生成实验 block
    *=============================================**/
-  const all_blocks_results = []
   let block_counter = 0
   const n_all_blocks = 10
   const BlockGenerator = (
@@ -220,7 +302,7 @@ onMounted(() => {
     task_name = "test",
     nreps_stim = 2,
     nreps_block = 1,
-    loop_by_acc = 80, // 正确率需要达到 80% or False
+    loop_by_acc = 0, // 正确率需要达到 80% or False
     trial_feedback_conf = {is_show: true, min_rt: 200, max_rt: 1500, duration: 500},
     show_block_feedback = true,
     is_countDown = true,
@@ -269,7 +351,7 @@ onMounted(() => {
     const count_down = {
       type: $HtmlKeyAndButtonPlugin,
       stimulus: `<count-down title=""></count-down>`,
-      trial_duration: 3650,
+      trial_duration: 3200,
       data: {trail_tag: 'countDown_trial'},
       choices: "NO_KEYS"
     }
@@ -408,8 +490,8 @@ onMounted(() => {
       repetitions: nreps_block,
       on_timeline_finish: ()=>{
         
-        all_blocks_results.push({[task_name]:block_results})
-        console.log('end of block', all_blocks_results, block_counter, practice_counter)
+        all_blocks_results.value.push({[task_name]:block_results})
+        console.log('end of block', all_blocks_results.value, block_counter, practice_counter)
       }
     }
   };
@@ -421,6 +503,7 @@ onMounted(() => {
   timeline.push(
     browserCheck,
     enter_fullscreen,
+    // chinrest,
   );
   exp_bw_cond.session_order.forEach((session, index) => {
     const keyMap = exp_bw_cond.key_balance[session=="shape"?0:1]
@@ -452,6 +535,7 @@ onMounted(() => {
     end_instruc,
     exit_fullscreen
   )
+  // all_blocks_results.value.push({test:"test222"})
 
   jsPsych.run(timeline);
 })
@@ -464,3 +548,126 @@ onMounted(() => {
 //   })
 // })
 </script>
+
+<style scoped>
+body {
+  /* 隐藏鼠标 */
+  /* cursor: none;   */
+  /* 隐藏文本光标或插入符 */
+  caret-color: transparent;
+}
+
+
+@media (max-width: 640px) {
+  p {
+    font-size: 1.3rem;
+    line-height: 1.5rem;
+  }
+}
+@media (min-width: 640px) {
+  p {
+    font-size: 1.8rem;
+    line-height: 2.3rem;
+  }
+}
+@media (min-width: 768px) {
+  p {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  p {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+}
+@media (min-width: 1280px) {
+  p {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+}
+
+.circle{
+  --tw-bg-opacity: 1;
+  --c-wh-400: 4em;
+  --c-wh-640: 5.5em;
+  --c-wh-768: 5.2em;
+  --c-wh-1024: 5em;
+  --c-wh-1280: 6em;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+  border-radius: 9999px;
+}
+@media (max-width: 640px) {
+  .circle {
+    width: var(--c-wh-400);
+    height: var(--c-wh-400);
+  }
+}
+@media (min-width: 640px) {
+  .circle {
+    width: var(--c-wh-640);
+    height: var(--c-wh-640);
+  }
+}
+@media (min-width: 768px) {
+  .circle {
+    width: var(--c-wh-768);
+    height: var(--c-wh-768);
+  }
+}
+@media (min-width: 1024px) {
+  .circle {
+    width: var(--c-wh-1024);
+    height: var(--c-wh-1024);
+  }
+}
+@media (min-width: 1280px) {
+  .circle {
+    width: var(--c-wh-1280);
+    height: var(--c-wh-1280);
+  }
+}
+
+.square{
+  --tw-bg-opacity: 1;
+  --s-wh-400: 3.7em;
+  --s-wh-640: 5.2em;
+  --s-wh-768: 4.9em;
+  --s-wh-1024: 4.8em;
+  --s-wh-1280: 5.8em;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+}
+@media (max-width: 640px) {
+  .square {
+    width: var(--s-wh-400);
+    height: var(--s-wh-400);
+  }
+}
+@media (min-width: 640px) {
+  .square {
+    width: var(--s-wh-640);
+    height: var(--s-wh-640);
+  }
+}
+@media (min-width: 768px) {
+  .square {
+    width: var(--s-wh-768);
+    height: var(--s-wh-768);
+  }
+}
+@media (min-width: 1024px) {
+  .square {
+    width: var(--s-wh-1024);
+    height: var(--s-wh-1024);
+  }
+}
+@media (min-width: 1280px) {
+  .square {
+    width: var(--s-wh-1280);
+    height: var(--s-wh-1280);
+  }
+}
+
+</style>

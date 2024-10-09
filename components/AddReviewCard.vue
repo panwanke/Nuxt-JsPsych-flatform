@@ -11,10 +11,10 @@ const hoverRating = ref(0)
     <div>
         <div class="flex flex-col items-center gap-2 p-3 w-full rounded-2xl bg-gray-dark text-white">
             <p class="text-lg sm:text-xl"> 
-                Bought or used this item?
+                添加评论
             </p>
             <p class="text-sm font-light max-w-xl text-center"> 
-                Contribute to our community by sharing your insights and experiences in a review.
+                请添加评论让其他参与者了解你对该实验的看法。
             </p>
             <div 
                 class="hidden md:flex hover:cursor-pointer w-fit mx-auto" 
@@ -42,7 +42,7 @@ const hoverRating = ref(0)
                 class="mt-1 max-w-32 sm:max-w-40"
             > 
                 <IconsReview class="!size-4 sm:!size-5" />
-                <span> ADD A REVIEW </span>
+                <span> 添加评论 </span>
             </Button>
         </div>
     </div>

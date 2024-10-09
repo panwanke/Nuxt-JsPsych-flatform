@@ -16,8 +16,12 @@ definePageMeta({
 const route = useRoute()
 const { signIn } = useAuth()
 
-const email = ref('test@psyexp.com')
-const password = ref('password')
+const email = ref('')
+const password = ref('')
+if (import.meta.dev){
+    email.value = 'test@psyexp.com'
+    password.value = 'password'
+}
 const errorMessage = ref()
 const loading = ref(false)
 const role = ref('user')

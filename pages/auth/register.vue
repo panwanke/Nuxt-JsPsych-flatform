@@ -6,7 +6,7 @@ useHead({
 
 definePageMeta({
     layout: 'auth',
-    middleware: 'auth',
+    middleware: ['user-auth'],
     auth: {
         unauthenticatedOnly: true,
         navigateAuthenticatedTo: '/',

@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
 
     const userExperiments = await prisma.userExperiment.findMany({
         where: {
-        userId: user?.id,
+            userId: user?.id,
         },
         include: {
             experiment: true, 

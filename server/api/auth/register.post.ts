@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-
+import prisma from '~/lib/prisma'
 import { Prisma } from '@prisma/client'
 
 async function create(data: any) {
@@ -8,20 +8,6 @@ async function create(data: any) {
             data: {
                 ...data,
                 password: bcrypt.hashSync(data.password, 10),
-                favorites: {
-                    create: {
-                        items: {
-                            create: []
-                        }
-                    }
-                },
-                cart: {
-                    create: {
-                        entries: {
-                            create: []
-                        }
-                    }
-                }
             }
         })
     }

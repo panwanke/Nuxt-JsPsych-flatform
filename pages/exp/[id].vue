@@ -100,8 +100,9 @@ async function deleteReview(id) {
         <div class="mt-2 lg:mt-4">
             <EmptyState 
                 v-if="!item.reviews?.length"
-                title="No reviews yet"
-                description="Add this item to your favorites list, and you'll be notified when new reviews are posted."
+                title="暂无评论"
+                description="请参与实验后再发表评论。"
+
             >
                 <Button 
                     @click="toggleFavorite" 
@@ -125,7 +126,7 @@ async function deleteReview(id) {
                             />
                         </template>
                     </ClientOnly>
-                    {{ isFavorite ? 'ADDED TO FAVORITES' : 'ADD TO FAVORITES' }}
+                    {{ isFavorite ? '已经参与实验可以发表评论' : '请参与实验后再发表评论' }}
                 </Button>
             </EmptyState>
             <div class="flex flex-col gap-2 md:gap-3">

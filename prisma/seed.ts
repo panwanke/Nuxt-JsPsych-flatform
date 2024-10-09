@@ -28,34 +28,34 @@ async function main() {
     })
     
     // 创建用户
-    const users = Array.from({ length: 30 }, () => ({
-        name: faker.system.fileName(),
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-        role: 'user',
-        institution: faker.company.name(),
-        age: faker.number.int({ min: 18, max: 65 }),
-        gender: "female",
-    }));
+    // const users = Array.from({ length: 30 }, () => ({
+    //     name: faker.system.fileName(),
+    //     email: faker.internet.email(),
+    //     password: faker.internet.password(),
+    //     role: 'user',
+    //     institution: faker.company.name(),
+    //     age: faker.number.int({ min: 18, max: 65 }),
+    //     gender: "female",
+    // }));
     
-    const createdUsers = await prisma.user.createMany({ data: users });
+    // const createdUsers = await prisma.user.createMany({ data: users });
     
     // 创建实验
-    // await prisma.experiment.upsert({
-    //     where: {
-    //       id: 1, 
-    //     },
-    //     create: {
-    //         name: "知觉决策任务",
-    //         description: "匹配任务1, 包含两个 session，一个session判断中间刺激的属性，另一个session判断中间刺激和周边刺激的匹配关系。",
-    //         photoUrl: "/img/items/matching-task1.webp",
-    //         slug: "matching-task1", // 由于我们需要固定的 slug，我们可以直接使用实验任务的名称
-    //         remuneration: 10,
-    //         startDate: faker.date.past(),
-    //         endDate: faker.date.future(),
-    //     },
-    //     update: {},
-    //   });
+    await prisma.experiment.upsert({
+        where: {
+          id: 1, 
+        },
+        create: {
+            name: "知觉决策任务",
+            description: "匹配任务1, 包含两个 session，一个session判断中间刺激的属性，另一个session判断中间刺激和周边刺激的匹配关系。",
+            photoUrl: "/img/items/matching-task1.webp",
+            slug: "matching-task1", // 由于我们需要固定的 slug，我们可以直接使用实验任务的名称
+            remuneration: 10,
+            startDate: faker.date.past(),
+            endDate: faker.date.future(),
+        },
+        update: {},
+      });
     // const experiments = Array.from({ length: 5 }, () => ({
     //     name: faker.commerce.productName(),
     //     description: faker.commerce.productDescription(),
@@ -66,17 +66,17 @@ async function main() {
     //     startDate: faker.date.past(),
     //     endDate: faker.date.future(),
     // }));
-    const experiments = [{
-        name: "知觉决策任务",
-        description: "匹配任务1, 包含两个 session，一个session判断中间刺激的属性，另一个session判断中间刺激和周边刺激的匹配关系。",
-        photoUrl: "/img/items/matching-task1.webp",
-        slug: "matching-task1", // 由于我们需要固定的 slug，我们可以直接使用实验任务的名称
-        remuneration: 10,
-        startDate: faker.date.past(),
-        endDate: faker.date.future(),
-    }]
+    // const experiments = [{
+    //     name: "知觉决策任务",
+    //     description: "匹配任务1, 包含两个 session，一个session判断中间刺激的属性，另一个session判断中间刺激和周边刺激的匹配关系。",
+    //     photoUrl: "/img/items/matching-task1.webp",
+    //     slug: "matching-task1", // 由于我们需要固定的 slug，我们可以直接使用实验任务的名称
+    //     remuneration: 10,
+    //     startDate: faker.date.past(),
+    //     endDate: faker.date.future(),
+    // }]
     
-    const createdExperiments = await prisma.experiment.createMany({ data: experiments });
+    // const createdExperiments = await prisma.experiment.createMany({ data: experiments });
     
     // 创建用户和实验的关联
     // const userExperiments = createdUsers.count.toString().split('').flatMap((_: any, index: number) => {

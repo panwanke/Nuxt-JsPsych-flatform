@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import { getUserByEmail } from '~/server/utils'
 import { getServerSession } from '#auth'
+import prisma from '~/lib/prisma'
 
 async function updatePassword(email: string, password: string) {
     await prisma.user.update({

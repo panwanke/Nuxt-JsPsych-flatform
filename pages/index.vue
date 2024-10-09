@@ -43,25 +43,7 @@ async function refresh() {
 const searchBus = useEventBus('search')
 searchBus.on(refresh)
 
-// function isFavorite(id) {
-//     return userExps?.value?.some(item => item === id)
-// }
-
-// const toggleFavorite = useDebounceFn(async (id) => {
-//     const item = items.value.find(item => item.id === id)
-//     if (item.favorite)
-//         await favorites.removeItem(id)
-//     else
-//         await favorites.addItem(id)
-//     item.favorite = !item.favorite
-// })
-
-const items = ref(data.value.items.map(item => { 
-    return { 
-        ...item, 
-        favorite: false // TODO
-    } 
-}))
+const items = ref(data.value.items)
 const count = ref(data.value.count)
 
 async function goBack() {
@@ -139,27 +121,33 @@ watch(() => useQuery(), async () => {
                     :key="item.id" 
                     :item="item" 
                 >
-                    <Button 
-                        @click="toggleFavorite(item.id)"
-                        aria-label="favorite"
-                        class="absolute top-0.5 right-0.5 md:top-1 md:right-1 !p-1.5 h-fit !w-fit !ring-0"
-                    > 
-                        <ClientOnly>
-                            <IconsBookmark
-                                variant="solid"
-                                :class="[
-                                    item.favorite ? 'stroke-gray-primary' : 'text-transparent stroke-white',
-                                    '!size-5 transition duration-200'
-                                ]"
-                            />
-                            <template #fallback>
+                    <NuxtLink 
+                        :to='`/tasks/${item.slug}`'
+                        :tag="item.isDone ? 'span' : 'a'"
+                        :class="{ disabled: item.isDone }"
+                    >
+                        <Button 
+                            aria-label="favorite"
+                            variant="secondary"
+                            class="absolute top-0.5 right-0.5 md:top-1 md:right-1 !p-1.5 h-fit !w-fit !ring-0"
+                        > 
+                            <ClientOnly>
                                 <IconsBookmark
                                     variant="solid"
-                                    class="text-transparent stroke-white !size-5 transition duration-200"
+                                    :class="[
+                                        item.isDone ? 'stroke-gray-primary' : 'text-transparent stroke-white',
+                                        '!size-5 transition duration-200'
+                                    ]"
                                 />
-                            </template>
-                        </ClientOnly>
-                    </Button>
+                                <template #fallback>
+                                    <IconsBookmark
+                                        variant="solid"
+                                        class="text-transparent stroke-white !size-5 transition duration-200"
+                                    />
+                                </template>
+                            </ClientOnly>
+                        </Button>
+                    </NuxtLink>
                 </GridItemCard>
             </div>
             <!-- list 显示模式 -->
@@ -182,9 +170,12 @@ watch(() => useQuery(), async () => {
                                 <IconsDoubleChevronRight class="!size-3.5" />
                             </Button>
                         </NuxtLink>
-                        <NuxtLink :to='`/tasks/${item.slug}`'>
+                        <NuxtLink 
+                            :to='`/tasks/${item.slug}`'
+                            :tag="item.isDone ? 'span' : 'a'"
+                            :class="{ disabled: item.isDone }"
+                        >
                             <Button 
-                            @click="toggleFavorite(item.id)"
                                 aria-label="favorite"
                                 size="small"
                                 variant="secondary" 
@@ -193,7 +184,7 @@ watch(() => useQuery(), async () => {
                                     <IconsBookmark
                                         variant="solid"
                                         :class="[
-                                            item.favorite ? 'stroke-gray-lighter' : 'text-transparent stroke-white',
+                                            item.isDone ? 'stroke-gray-lighter' : 'text-transparent stroke-white',
                                             '!size-5 transition duration-200'
                                         ]"
                                     />
@@ -204,33 +195,39 @@ watch(() => useQuery(), async () => {
                                         />
                                     </template>
                                 </ClientOnly>
-                                {{ item.favorite ? '已参加' : '参加实验' }}
+                                {{ item.isDone ? '已参加' : '参加实验' }}
                             </Button>
                         </NuxtLink>
                     </div>
                     <!-- 手机屏幕下 仅显示favorite图标 -->
                     <div class="md:hidden absolute bottom-1 right-1">
-                        <Button 
-                            @click="toggleFavorite(item.id)" 
-                            aria-label="favorite"
-                            class="!p-[7px]"
-                        > 
-                            <ClientOnly>
-                                <IconsBookmark
-                                    variant="solid"
-                                    :class="[
-                                        item.favorite ? 'stroke-gray-primary' : 'text-transparent stroke-white',
-                                        '!size-[18px] transition duration-200'
-                                    ]"
-                                />
-                                <template #fallback>
+                        <NuxtLink 
+                            :to='`/tasks/${item.slug}`'
+                            :tag="item.isDone ? 'span' : 'a'"
+                            :class="{ disabled: item.isDone }"
+                        >
+                            <Button 
+                                aria-label="favorite"
+                                variant="secondary" 
+                                class="!p-[7px]"
+                            > 
+                                <ClientOnly>
                                     <IconsBookmark
                                         variant="solid"
-                                        class="text-transparent stroke-white !size-[18px] transition duration-200"
+                                        :class="[
+                                            item.isDone ? 'stroke-gray-primary' : 'text-transparent stroke-white',
+                                            '!size-[18px] transition duration-200'
+                                        ]"
                                     />
-                                </template>
-                            </ClientOnly>
-                        </Button>
+                                    <template #fallback>
+                                        <IconsBookmark
+                                            variant="solid"
+                                            class="text-transparent stroke-white !size-[18px] transition duration-200"
+                                        />
+                                    </template>
+                                </ClientOnly>
+                            </Button>
+                        </NuxtLink>
                     </div>
                 </ListItemCard>
             </div>

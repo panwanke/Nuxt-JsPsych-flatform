@@ -7,7 +7,7 @@ const { $initJsPsych, $HtmlKeyAndButtonPlugin, $fullscreen, $browserCheck } = us
 import "assets/css/countDown.css"
 import "jspsych/css/jspsych.css"
 import { DesignGenerator, BrowserCheck,HtmlGenerator } from "~/utils/jsPsychUtiles";
-
+import { useToast } from 'vue-toastification'
 
 definePageMeta({
   layout: 'exp-layout',
@@ -31,6 +31,7 @@ useHead({
 
 const router = useRouter()
 const route = useRoute();
+const toast = useToast()
 
 const userId = ref(null);
 const experimentId = ref(null);
@@ -74,6 +75,11 @@ const startTask = async () => {
     taskStarted.value = true;
     userExpId.value = data?.value.id;
     // console.log('userExpId',userExpId.value)
+
+    if(data?.value.isDone){
+      toast.success('您已参加过该实验，不能再次参与!')
+      router.push('/user/myexp')
+    }
 };
 await startTask();
 

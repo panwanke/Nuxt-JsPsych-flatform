@@ -1,31 +1,13 @@
 <script setup>
 
-import { useToast } from 'vue-toastification'
-
 const props = defineProps({
-    item: Object,
-    isFavorite: Boolean
+    item: Object
 })
 
-const emit = defineEmits(['toggleFavorite'])
-
-// const route = useRoute()
-// const toast = useToast()
-
-// const cart = useCart()
 
 const size = ref()
 const route = useRoute()
 const task_path = ref(route.path.replace('/exp/','/tasks/'))
-// console.log('task_path',task_path.value)
-// const addToCart = useDebounceFn(async () => {
-//     try {
-//         await cart.addItem(route.params.id, size.value, props.item.sizes.length)
-//     } 
-//     catch(e) {
-//         toast.error(e.statusMessage)
-//     }
-// })
 
 </script>
 
@@ -97,29 +79,7 @@ const task_path = ref(route.path.replace('/exp/','/tasks/'))
                         <span> 现在参与 </span>
                     </Button>
                 </NuxtLink>
-                <Button
-                    @click="emit('toggleFavorite')" 
-                    size="medium"
-                    aria-label="favorite"
-                    class="xl:h-16"
-                > 
-                    <ClientOnly>
-                        <IconsBookmark
-                            variant="solid"
-                            :class="[
-                                isFavorite ? 'stroke-gray-primary' : 'text-transparent stroke-white',
-                                '!size-4 sm:!size-5 transition duration-200'
-                            ]"
-                        />
-                        <template #fallback>
-                            <IconsBookmark
-                                variant="solid"
-                                class="text-transparent stroke-white !size-4 sm:!size-5 transition duration-200"
-                            />
-                        </template>
-                    </ClientOnly>
-                    <span> {{ isFavorite ? '已收藏或已参与' : '收藏后再参与' }} </span>
-                </Button>
+
             </div>
         </div>
     </div>

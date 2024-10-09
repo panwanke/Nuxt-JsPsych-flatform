@@ -5,21 +5,6 @@ import { useToast } from 'vue-toastification'
 const route = useRoute()
 const toast = useToast()
 
-// const favorites = useFavorites()
-// const userFavorites = ref(await favorites.getIds())
-
-// const id = computed(() => route.params.id)
-// console.log('id',id)
-// const isFavorite = ref(userFavorites?.value?.some(item => item === id.value))
-
-// const toggleFavorite = useDebounceFn(async () => {
-//     if (isFavorite.value)
-//         await favorites.removeItem(id.value)
-//     else
-//         await favorites.addItem(id.value)
-//     isFavorite.value = !isFavorite.value
-// })
-
 const { data: user } = await useFetch('/api/user')
 const headers = useRequestHeaders(['cookie'])
 
@@ -70,14 +55,12 @@ async function deleteReview(id) {
     <div class="flex flex-col w-full gap-2 md:gap-3 mt-2">
         <ItemContainer 
             :item="item"
-            :isFavorite="isFavorite"
-            @toggleFavorite="toggleFavorite"
         />
         <Separator />
         <AddReviewCard v-if="loggedIn && !userLeftReview" />
         <AuthPrompt v-else-if="!loggedIn">
         <p class="mx-8 sm:mx-0">
-                请登陆后再进行评论。 
+                登陆并完成实验后可进行评论。 
             </p>
             <p class="hidden md:block">
                 ... 
@@ -105,7 +88,6 @@ async function deleteReview(id) {
 
             >
                 <Button 
-                    @click="toggleFavorite" 
                     variant="secondary" 
                     size="small" 
                     aria-label="favorite"
@@ -115,7 +97,7 @@ async function deleteReview(id) {
                         <IconsBookmark
                             variant="solid"
                             :class="[
-                                isFavorite ? 'stroke-red-primary' : 'text-transparent stroke-white',
+                                item.isDone ? 'stroke-red-primary' : 'text-transparent stroke-white',
                                 '!size-4 sm:!size-5 transition duration-200'
                             ]"
                         />
@@ -126,7 +108,7 @@ async function deleteReview(id) {
                             />
                         </template>
                     </ClientOnly>
-                    {{ isFavorite ? '已经参与实验可以发表评论' : '请参与实验后再发表评论' }}
+                    {{ item.isDone ? '已经参与实验可以发表评论' : '请参与实验后再发表评论' }}
                 </Button>
             </EmptyState>
             <div class="flex flex-col gap-2 md:gap-3">

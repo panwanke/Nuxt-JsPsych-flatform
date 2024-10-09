@@ -39,7 +39,6 @@ CREATE TABLE "UserExperiment" (
     "experimentId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "isAdded" BOOLEAN NOT NULL DEFAULT false,
     "isDone" BOOLEAN NOT NULL DEFAULT false,
     "DeviceInfo" JSONB,
     "expData" JSONB,
@@ -63,6 +62,9 @@ CREATE TABLE "Review" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Experiment_slug_key" ON "Experiment"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "UserExperiment_userId_experimentId_key" ON "UserExperiment"("userId", "experimentId");

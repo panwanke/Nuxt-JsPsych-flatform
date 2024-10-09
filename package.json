@@ -38,7 +38,6 @@
     "@nuxtjs/device": "^3.2.4",
     "@nuxtjs/robots": "^4.1.7",
     "@panwanke/jspsych-html-keynbutton-response": "2.0.1",
-    "@prisma/nuxt": "^0.0.35",
     "@vercel/blob": "^0.23.4",
     "@vueuse/core": "^11.0.3",
     "@vueuse/nuxt": "^11.0.3",

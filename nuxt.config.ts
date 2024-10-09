@@ -31,9 +31,9 @@ export default defineNuxtConfig({
     }
   },
 
-  prisma: {
-    installStudio: false,
-  },
+  // prisma: {
+  //   installStudio: false,
+  // },
 
   app: {
     head: {
@@ -67,7 +67,7 @@ export default defineNuxtConfig({
     '@vue-email/nuxt',
     '@vueuse/nuxt',
     '@nuxt/image',
-    '@prisma/nuxt',
+    // '@prisma/nuxt',
     '@nuxtjs/robots'
   ],
 

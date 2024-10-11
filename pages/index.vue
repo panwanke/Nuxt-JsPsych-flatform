@@ -44,10 +44,6 @@ const searchBus = useEventBus('search')
 searchBus.on(refresh)
 
 const items = ref(data.value.items)
-// const items = ref(data.value.items.map(item => ({
-//     ...item,
-//     isDone: true
-// })));
 const count = ref(data.value.count)
 
 async function goBack() {
@@ -125,11 +121,7 @@ watch(() => useQuery(), async () => {
                     :key="item.id" 
                     :item="item" 
                 >
-                    <NuxtLink 
-                        :to='`/tasks/${item.slug}`'
-                        :tag="item.isDone ? 'span' : 'a'"
-                        :class="{ disabled: item.isDone }"
-                    >
+                    <NuxtLink :to='`/tasks/${item.slug}`'>
                         <Button 
                             aria-label="favorite"
                             variant="secondary"
@@ -138,10 +130,6 @@ watch(() => useQuery(), async () => {
                             <ClientOnly>
                                 <IconsBookmark
                                     variant="solid"
-                                    :class="[
-                                        item.isDone ? 'stroke-gray-primary' : 'text-transparent stroke-white',
-                                        '!size-5 transition duration-200'
-                                    ]"
                                 />
                                 <template #fallback>
                                     <IconsBookmark
@@ -174,11 +162,7 @@ watch(() => useQuery(), async () => {
                                 <IconsDoubleChevronRight class="!size-3.5" />
                             </Button>
                         </NuxtLink>
-                        <NuxtLink 
-                            :to='`/tasks/${item.slug}`'
-                            :tag="item.isDone ? 'span' : 'a'"
-                            :class="{ disabled: item.isDone }"
-                        >
+                        <NuxtLink :to='`/tasks/${item.slug}`'>
                             <Button 
                                 aria-label="favorite"
                                 size="small"
@@ -187,10 +171,6 @@ watch(() => useQuery(), async () => {
                                 <ClientOnly>
                                     <IconsBookmark
                                         variant="solid"
-                                        :class="[
-                                            item.isDone ? 'stroke-gray-lighter' : 'text-transparent stroke-white',
-                                            '!size-5 transition duration-200'
-                                        ]"
                                     />
                                     <template #fallback>
                                         <IconsBookmark
@@ -199,17 +179,13 @@ watch(() => useQuery(), async () => {
                                         />
                                     </template>
                                 </ClientOnly>
-                                {{ item.isDone ? '已参加' : '参加实验' }}
+                                <span>参加实验</span>
                             </Button>
                         </NuxtLink>
                     </div>
                     <!-- 手机屏幕下 仅显示favorite图标 -->
                     <div class="md:hidden absolute bottom-1 right-1">
-                        <NuxtLink 
-                            :to='`/tasks/${item.slug}`'
-                            :tag="item.isDone ? 'span' : 'a'"
-                            :class="{ disabled: item.isDone }"
-                        >
+                        <NuxtLink :to='`/exp/${item.slug}`'>
                             <Button 
                                 aria-label="favorite"
                                 variant="secondary" 
@@ -218,10 +194,6 @@ watch(() => useQuery(), async () => {
                                 <ClientOnly>
                                     <IconsBookmark
                                         variant="solid"
-                                        :class="[
-                                            item.isDone ? 'stroke-gray-primary' : 'text-transparent stroke-white',
-                                            '!size-[18px] transition duration-200'
-                                        ]"
                                     />
                                     <template #fallback>
                                         <IconsBookmark

@@ -40,7 +40,7 @@ CREATE TABLE "UserExperiment" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "isDone" BOOLEAN NOT NULL DEFAULT false,
-    "DeviceInfo" JSONB,
+    "deviceInfo" JSONB,
     "expData" JSONB,
 
     CONSTRAINT "UserExperiment_pkey" PRIMARY KEY ("id")

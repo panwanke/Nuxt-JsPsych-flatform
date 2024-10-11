@@ -14,7 +14,7 @@ definePageMeta({
 
 const userExp = useUserExp()
 const items = ref(await userExp.getItems())
-console.log('items',items.value)
+// console.log('myexp.vue items',items.value)
 
 
 </script>
@@ -62,7 +62,7 @@ console.log('items',items.value)
                                 </Button>
                             </div>
                             <div v-else>
-                                <NuxtLink :to='`/tasks/${item?.slug}`'>
+                                <NuxtLink :to='`/tasks/${item?.experiment.slug}`'>
                                     <Button 
                                         size="small"
                                         variant="secondary" 
@@ -71,11 +71,11 @@ console.log('items',items.value)
                                         <IconsDoubleChevronRight class="!size-3.5" />
                                     </Button>
                                 </NuxtLink>
-                                <NuxtLink :to='`/exp/${item?.slug}`'>
+                                <NuxtLink :to='`/exp/${item?.experiment.slug}`'>
                                     <Button 
                                         size="small" 
                                         > 
-                                        <IconsTrashBin class="!size-5" />
+                                        <IconsDoubleChevronRight class="!size-5" />
                                         <span> 查看详情 </span>
                                     </Button>
                                 </NuxtLink>

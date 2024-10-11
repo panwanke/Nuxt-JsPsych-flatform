@@ -7,43 +7,43 @@ body {
 
 
 @media (max-width: 640px) {
-  p {
+  div.jp {
     font-size: 1.3rem;
     line-height: 1.5rem;
   }
 }
 @media (min-width: 640px) {
-  p {
+  div.jp {
     font-size: 1.8rem;
     line-height: 2.3rem;
   }
 }
 @media (min-width: 768px) {
-  p {
+  div.jp {
     font-size: 2rem;
     line-height: 2.5rem;
   }
 }
 @media (min-width: 1024px) {
-  p {
+  div.jp {
     font-size: 2rem;
     line-height: 2.5rem;
   }
 }
 @media (min-width: 1280px) {
-  p {
+  div.jp {
     font-size: 2rem;
     line-height: 2.5rem;
   }
 }
 
 .stim-length{
-  --sl-w-400: 220px;
-  --sl-w-640: 300px;
-  --sl-w-768: 350px;
-  --sl-w-1024: 400px;
-  --sl-w-1280: 550px;
-  --sl-w-1440: 550px;
+  --sl-w-400: 250px;
+  --sl-w-640: 350px;
+  --sl-w-768: 400px;
+  --sl-w-1024: 420px;
+  --sl-w-1280: 450px;
+  --sl-w-1440: 480px;
 }
 @media (max-width: 640px) {
   .stim-length {
@@ -85,10 +85,10 @@ body {
   --tw-bg-opacity: 1;
   --c-wh-400: 4em;
   --c-wh-640: 5.5em;
-  --c-wh-768: 5.2em;
-  --c-wh-1024: 5em;
-  --c-wh-1280: 6em;
-  --c-wh-1440: 4.8em;
+  --c-wh-768: 5.8em;
+  --c-wh-1024: 6em;
+  --c-wh-1280: 6.2em;
+  --c-wh-1440: 6.5em;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity));
   border-radius: 9999px;
 }
@@ -133,10 +133,10 @@ body {
   --tw-bg-opacity: 1;
   --s-wh-400: 3.7em;
   --s-wh-640: 5.2em;
-  --s-wh-768: 4.7em;
-  --s-wh-1024: 4.6em;
-  --s-wh-1280: 5.6em;
-  --s-wh-1440: 4.4em;
+  --s-wh-768: 5.4em;
+  --s-wh-1024: 5.6em;
+  --s-wh-1280: 5.8em;
+  --s-wh-1440: 6.1em;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity));
 }
 @media (max-width: 640px) {

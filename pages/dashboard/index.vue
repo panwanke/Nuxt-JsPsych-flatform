@@ -39,6 +39,7 @@
 
 definePageMeta({
     layout: 'dashboard',
+    middleware: 'admin-auth'
 })
 
 // 懒加载组件

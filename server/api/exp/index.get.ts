@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
     const options = {
         'price': {
-            price: direction
+            remuneration: direction
         },
         'review-count': {
             reviews: {
@@ -20,7 +20,8 @@ export default defineEventHandler(async (event) => {
     let items = await prisma.experiment.findMany({
         orderBy: options as any,
         include: {
-            reviews: true
+            reviews: true,
+            // UserExperiment: true
         },
         where: {
             name: {
@@ -42,7 +43,11 @@ export default defineEventHandler(async (event) => {
     })
 
     items?.forEach((item: any, index: any) => {
-        items[index] = { ...item, rating: getItemRating(item) }
+        items[index] = { 
+            ...item, 
+            rating: getItemRating(item), 
+            // isDone: getItemIsDone(item) 
+        }
     })
 
     if (sortBy === 'rating')

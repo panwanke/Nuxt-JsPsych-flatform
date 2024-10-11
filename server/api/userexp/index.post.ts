@@ -5,23 +5,16 @@ export default defineEventHandler(async (event) => {
     const { userId, experimentId} = await readBody(event);
 
     // 添加 UserExperiment记录
-    try {
+    try{
         const userExperiment = await prisma.userExperiment.create({
-          data: {
+            data: {
             userId,
             experimentId,
-          },
+            },
         });
-    
-        return { 
-            success: true, 
-            message: 'UserExperiment added successfully',
-            data: userExperiment 
-        };
-    } catch (error) {
-        return { 
-            success: false, 
-            error: "Error adding UserExperiment: ",
-        };
+
+        return userExperiment
+    }catch(e){
+        return {error: `user ${userId} with exp ${experimentId} has been created`}
     }
 });

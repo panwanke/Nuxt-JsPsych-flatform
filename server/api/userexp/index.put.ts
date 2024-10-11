@@ -16,14 +16,15 @@ export default defineEventHandler(async (event) => {
         });
     
         return { 
-            success: true, 
+            error: false, 
             message: 'UserExperiment updated successfully',
             data: userExperiment 
         };
-    } catch (error) {
+    } catch (error:any) {
+        console.error('update user exp error', error);
         return { 
-            success: false, 
-            error: "Error updating UserExperiment: ",
+            error: true, 
+            message: `Error adding UserExperiment: ${error}`,
         };
     }
 

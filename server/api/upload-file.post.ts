@@ -16,8 +16,27 @@ export default defineEventHandler(async (event) => {
                 statusCode: 400,
                 statusMessage: 'The file type is not supported.'
             })
+        
+            // 读取环境变量中的 Vercel Blob 存储令牌
+        const token = process.env.VERCEL_BLOB_TOKEN
 
-        const { url } = await put(`avatars/${user?.id}.png`, file.data, { access: 'public' })
+        // 确保令牌存在
+        if (!token) {
+            throw createError({
+                statusCode: 500,
+                statusMessage: 'Blob storage token is not configured.'
+            })
+        }
+
+        const { url } = await put(
+            `avatars/${user?.id}.png`, 
+            file.data, 
+            { 
+                access: 'public',
+                token: token
+
+            }
+        )
 
         return {
             message: 'File uploaded succesfully!',

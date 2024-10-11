@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
 
     const options = {
         'price': {
-            price: direction
+            remuneration: direction
         },
         'review-count': {
             reviews: {

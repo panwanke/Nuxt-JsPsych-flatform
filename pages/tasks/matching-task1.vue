@@ -1,17 +1,14 @@
 <template></template>
 
-<style scoped>
-@import 'assets/css/countDown.css';
-@import 'assets/css/matching-task.css';
-@import 'jspsych/css/jspsych.css';
-</style>
+
 
 <script setup>
 
 const { isMobile } = useDevice()
 const { $initJsPsych, $HtmlKeyAndButtonPlugin, $fullscreen, $browserCheck } = useNuxtApp()
-// import "assets/css/countDown.css"
-// import "jspsych/css/jspsych.css"
+import "jspsych/css/jspsych.css";
+import "assets/css/countDown.css";
+import "assets/css/matching-task.css";
 import { DesignGenerator, BrowserCheck,HtmlGenerator } from "~/utils/jsPsychUtiles";
 import { useToast } from 'vue-toastification'
 
@@ -39,6 +36,11 @@ const router = useRouter()
 const route = useRoute();
 const toast = useToast()
 
+
+/**============================================
+ *               定义全局数据变量
+ *=============================================**/
+const testMode = true
 const userId = ref(null);
 const experimentId = ref(null);
 const userExpId = ref(null);
@@ -46,11 +48,25 @@ const taskStarted = ref(false);
 const taskIsDone = ref(false);
 const browserInfo = ref();
 const all_blocks_results = ref([])
-
+let pactice_pass_acc
+let nreps_stim_prac
+let nreps_stim_test
+let nreps_block_test
+let n_all_blocks
+if (testMode) {
+  n_all_blocks = 3
+  nreps_stim_prac = 1;
+  nreps_stim_test = 1;
+  nreps_block_test = 2;
+  pactice_pass_acc=0;
+} else {
+  n_all_blocks = 10
+  nreps_stim_prac = 5;
+  nreps_stim_test = 10;
+  nreps_block_test = 5;
+  pactice_pass_acc=85; // 85%
+}
 // 获取被试 ID
-// const { data } = useAuth()
-// console.log('data222', data.value)
-// const user = await getUserByEmail(data?.value.user?.email)
 const { data:user }  = await useFetch('/api/user')
 // console.log('user222', user.value)
 userId.value = user.value.id
@@ -58,53 +74,55 @@ userId.value = user.value.id
 
 // 获取实验 ID
 const slug = route.path.split('/').slice(-1)[0];
-// console.log('slug',slug)
 const { data:experiment } = await useAsyncData('exp', () => $fetch(`/api/exp/${slug}`))
 experimentId.value = experiment.value?.id;
 // console.log('experimentId',experimentId.value)
 
 // 创建 UserExperiment 记录
 const startTask = async () => {
-    const { error,data } = await useFetch('/api/userexp', {
+    const { data } = await useFetch('/api/userexp', {
       method: 'POST',
       body: {
         userId,
         experimentId: experimentId.value,
       },
     });
+    // await refreshNuxtData('item')
+    // console.log('error1',error.value)
+    // console.log('error2',data.value)
 
-    if (error.value) {
-      // await refreshNuxtData('item')
-      console.error(error.value);
-    }
-
-    taskStarted.value = true;
-    userExpId.value = data?.value.id;
-    // console.log('userExpId',userExpId.value)
-
-    if(data?.value.isDone){
+    if (data?.value.isDone) {
       toast.success('您已参加过该实验，不能再次参与!')
       router.push('/user/myexp')
     }
+    if (data?.value.error) {
+      console.warn(data?.value.error);
+      // toast.error(error.value)
+      // router.push('/user/myexp')
+    }
+    
+    taskStarted.value = true;
+    userExpId.value = data?.value.id;
+    // console.log('userExpId',userExpId.value)
 };
 await startTask();
 
 // 完成任务，更新 UserExperiment 的 isDone 状态
 const completeTask = async (metaData={}, fileName, jsonData, csvData) => {
 
-  const { error } = await useFetch('/api/userexp', {
+  const { data1 } = await useFetch('/api/userexp', {
     method: 'PUT',
     body: {
       id: userExpId.value,
       updateData: metaData
     },
   });
-  if (error.value) {
-    // await refreshNuxtData('item')
-    console.error(error.value);
+  await refreshNuxtData('userexp')
+  if (data1.value.error) {
+    console.error(data1.value.message);
   }
 
-  await useFetch('/api/upload-exp-data', {
+  const { data2 } = await useFetch('/api/upload-exp-data', {
       method: 'POST',
       body: {
         file_name: fileName,
@@ -115,7 +133,10 @@ const completeTask = async (metaData={}, fileName, jsonData, csvData) => {
         'Content-Type': 'application/json'
       }
   });
-  await useFetch('/api/upload-exp-data', {
+  if (data2.value.error) {
+    console.error(data2.value.message);
+  }
+  const { data3 } = await useFetch('/api/upload-exp-data', {
       method: 'POST',
       body: {
         file_name: fileName,
@@ -126,10 +147,12 @@ const completeTask = async (metaData={}, fileName, jsonData, csvData) => {
         'Content-Type': 'application/json'
       }
   });
-  router.push('/user/myexp')
-  // router.back()
-
+  if (data3.value.error) {
+    console.error(data3.value.message);
+  }
   taskIsDone.value = true;
+
+  router.push('/user/myexp')
 };
 
 
@@ -199,14 +222,14 @@ onMounted(() => {
     use_webaudio: false,
     display_element: "nuxt-jspsych-container",
     on_finish: async () => {
-      jsPsych.data.displayData();
+      if (testMode) jsPsych.data.displayData();
       // const exp_data = jsPsych.data.get().json()
       const metaData = {
         isDone: true, 
-        deviceInfo: JSON.stringify(browserInfo?.value ?? "no browser info"),
-        expData: JSON.stringify(all_blocks_results.value)
+        deviceInfo: browserInfo?.value,
+        expData: all_blocks_results.value
       }
-      await completeTask(metaData, `${userId.value || "test"}_matching-task1`, jsPsych.data.get().json(), jsPsych.data.get().csv())
+      await completeTask(metaData, `matching-task1/subj${userId.value || "Test"}`, jsPsych.data.get().json(), jsPsych.data.get().csv())
     }
   });
 
@@ -249,17 +272,17 @@ onMounted(() => {
       type: $HtmlKeyAndButtonPlugin,
       stimulus: () => {
         let str = `
-          <div class="px-2 xxs:px-5 mx-auto">
-          <p class="text-center text-red-primary pb-3">欢迎您参加知觉${session=="matchness"?"匹配":"判断"}任务实验。</p>
-          <p>在接下来的任务中，你将看到一排图形。</p>
+          <div class="jp px-2 xxs:px-5 mx-auto">
+          <p class="text-center text-red-primary text-[1.2em] pb-5">欢迎您参加知觉${session=="matchness"?"匹配":"判断"}实验。</p>
+          <p>接下来的任务中您将看到一排图形。</p>
           <p>(圆形●或方形■)</p>`
         if (session=="matchness"){
-          str += `<p>你需要专注于中间的图形，判断中间的图形和两侧的图形是否相同或匹配。</p>
+          str += `<p>您需要专注于中间的图形，判断中间的图形和两侧的图形是否匹配。</p>
           <p>如果图形${keyMap.label[0]=="match"?"匹配":"不匹配"}，请按“${keyMap.key[0]}”；</p>
           <p>如果图形${keyMap.label[1]=="match"?"匹配":"不匹配"}，请按“${keyMap.key[1]}”。</p>
           `
         }else{
-          str += `<p>你的任务是忽略两侧的图形，专注于中间的图形。</p>
+          str += `<p>您的任务是忽略两侧的图形，专注于中间的图形。</p>
           <p>如果中间的图形是${keyMap.label[0]}，请按“${keyMap.key[0]}”；</p>
           <p>如果是${keyMap.label[1]}，请按“${keyMap.key[1]}”。</p>`
         }
@@ -276,8 +299,8 @@ onMounted(() => {
       type: $HtmlKeyAndButtonPlugin,
       stimulus: () => {
         let str = `
-          <div class="px-2 xxs:px-5 mx-auto">
-          <p class="text-center text-red-primary text-[1.2em] pb-2">练习结束，现在开始正式实验</p>
+          <div class="jp px-2 xxs:px-5 mx-auto">
+          <p class="text-center text-red-primary text-[1.2em] pb-5">练习结束，现在开始正式实验</p>
           <p>请注意：正式实验中将不再会呈现反馈。</p>
           </div>
           `
@@ -291,7 +314,7 @@ onMounted(() => {
     stimulus: () => {
       let str = `
         <div class="px-2 xxs:px-5 mx-auto">
-        <p class="text-center text-red-primary text-[1.2em] pb-2">任务结束，期待下次再见。</p></div>
+        <p class="text-center text-red-primary text-[1.2em] pb-5">任务结束，期待下次再见。</p></div>
         `
       return str
     },
@@ -306,7 +329,6 @@ onMounted(() => {
    *               生成实验 block
    *=============================================**/
   let block_counter = 0
-  const n_all_blocks = 10
   const BlockGenerator = (
     stim_design,
     keyMap,
@@ -314,7 +336,7 @@ onMounted(() => {
     task_name = "test",
     nreps_stim = 2,
     nreps_block = 1,
-    loop_by_acc = 0, // 正确率需要达到 80% or False
+    loop_by_acc = pactice_pass_acc, // False or number
     trial_feedback_conf = {is_show: true, min_rt: 200, max_rt: 1500, duration: 500},
     show_block_feedback = true,
     is_countDown = true,
@@ -322,7 +344,6 @@ onMounted(() => {
     fixation_duration = 500,
     stim_duration = 2000,
   ) => {
-    
     /**============================================
      *               定义全局闭包变量
      *=============================================**/
@@ -342,19 +363,19 @@ onMounted(() => {
     const get_last_block_res = () => {
       return block_results[block_results.length - 1]
     }
-    const html_loop_by_acc = ()=>`<p>您的正确率${get_last_block_res().accuracy}%低于最低标准${loop_by_acc}%！</p><p>请重复进行练习</p>`;
+    const html_loop_by_acc = ()=>`<div class="jp"><p>您的正确率${get_last_block_res().accuracy}%低于最低标准${loop_by_acc}%！</p><p>请重复进行练习</p><div>`;
     const html_block_feedback = ()=>{
       let str = ""
       if (n_all_blocks > 1 & task_name.includes("test") ){
         str += `<p>您已完成${block_counter+1}/${n_all_blocks}部分</p>`
-        if (block_counter < n_all_blocks - 1) str += "<p>请休息一会儿</p>"
-        else str += "<p>恭喜您完成全部任务！</p>"
+        if (block_counter < n_all_blocks - 1) str += '<p>请休息一会儿</p>'
+        else str += '<p>恭喜您完成全部任务！</p>'
       } 
       str += `
-      <p>你的正确率是：${get_last_block_res().accuracy}%</p>
-      <p>你的平均反应时间是：${get_last_block_res().rt}毫秒</p>`
+      <p>您的正确率是：${get_last_block_res().accuracy}%</p>
+      <p>您的平均反应时间是：${get_last_block_res().rt}毫秒</p>`
 
-      return str
+      return `<div class="jp">${str}</div>`
     };
 
     /**============================================
@@ -398,7 +419,7 @@ onMounted(() => {
 
         const correct = data.response == data.correct_key;
         data.correct = correct;
-        data.response = designGenerator.findLabelByKey(data.response, keyMap);
+        data.response_key = designGenerator.findLabelByKey(data.response, keyMap);
 
         data.task = get_task_name(task_name)
       },
@@ -517,38 +538,46 @@ onMounted(() => {
     enter_fullscreen,
     // chinrest,
   );
-  exp_bw_cond.session_order.forEach((session, index) => {
-    const keyMap = exp_bw_cond.key_balance[session=="shape"?0:1]
-    timeline.push(...[
-      instrucGenerator(keyMap, session),
-      // practice
-      BlockGenerator(
-        stim_design, 
-        keyMap, 
-        session,                  // judgment_aim
-        `${session}_practice`,    // task_name
-        1,                        // nreps_stim = 5,
-      ),
-      // test
-      formal_test_instruc,
-      BlockGenerator(
-        stim_design, 
-        keyMap, 
-        session,             // judgment_aim
-        `${session}_test`,   // NOTE: task_name: must include "test" for block counter down
-        1,                   // nreps_stim = 10,
-        5,                   // nreps_block = 5
-        false,               // loop_by_acc = False
-        {is_show:false},     // trial_feedback_conf
-      )
-    ])
-  });
-  timeline.push({
-    type: $HtmlKeyAndButtonPlugin,
-    stimulus: stimHtmlFunc(stim_design[0]),
-    choices: ["q","p"],
-    button_html: htmlGenerator.generateButton
-  })
+  const add_block = ()=>{
+    exp_bw_cond.session_order.forEach((session, index) => {
+      const keyMap = exp_bw_cond.key_balance[session=="shape"?0:1]
+      timeline.push(...[
+        instrucGenerator(keyMap, session),
+        // practice
+        BlockGenerator(
+          stim_design, 
+          keyMap, 
+          session,                  // judgment_aim
+          `${session}_practice`,    // task_name
+          nreps_stim_prac,                        // nreps_stim = 5,
+        ),
+        // test
+        formal_test_instruc,
+        BlockGenerator(
+          stim_design, 
+          keyMap, 
+          session,             // judgment_aim
+          `${session}_test`,   // NOTE: task_name: must include "test" for block counter down
+          nreps_stim_test,                   // nreps_stim = 10,
+          nreps_block_test,                   // nreps_block = 5
+          false,               // loop_by_acc = False
+          {is_show:false},     // trial_feedback_conf
+        )
+      ])
+    });
+  }
+  // if(testMode){
+  //   timeline.push({
+  //     type: $HtmlKeyAndButtonPlugin,
+  //     stimulus: stimHtmlFunc(stim_design[0]),
+  //     choices: ["q","p"],
+  //     button_html: htmlGenerator.generateButton
+  //   })
+  // }else{
+  //   add_block()
+  // }
+  add_block()
+
   timeline.push(
     end_instruc,
     exit_fullscreen
@@ -558,11 +587,9 @@ onMounted(() => {
   jsPsych.run(timeline);
 })
 
-// onUnmounted(() => {
-//   // jsPsychRef.value.endExperiment()
-
-//   reloadNuxtApp({
-//     force: true,
-//   })
-// })
+onUnmounted(() => {
+  reloadNuxtApp({
+    force: true,
+  })
+})
 </script>

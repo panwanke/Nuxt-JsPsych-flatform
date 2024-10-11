@@ -71,8 +71,14 @@ export class HtmlGenerator {
     if (choice == " ") str = "请按空格继续"
     else if (choice == "ALL_KEY") str = "请按任意键"
     else if (choice == "继续" || choice.toLowerCase() == "continue") return "继续"
-    else if (keyMap.key.length > 0) str = `${findLabelByKey(choice, keyMap)}按${choice}`
-    else str = `请按${choice}`
+    else if (keyMap.key.length > 0){ 
+      let choice1 = findLabelByKey(choice, keyMap)
+      if(choice1.includes("match")){
+        choice1 = choice1.replace("mismatch", "不匹配")
+        choice1 = choice1.replace("match", "匹配")
+      }
+      str = `${choice1}请按${choice}`
+    }else str = `请按${choice}`
   
     return `<button class="jspsych-btn bg-gray-300 hover:bg-gray-400 active:bg-gray-500 text-gray-800 font-bold py-2 md:py-3 lg:py-4 px-4 md:px-8 lg:px-12 rounded focus:outline-none focus:shadow-outline">${str}</button>`;
   }

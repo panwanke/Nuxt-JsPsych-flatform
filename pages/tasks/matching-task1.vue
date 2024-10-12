@@ -44,7 +44,6 @@ const testMode = true
 const userId = ref(null);
 const experimentId = ref(null);
 const userExpId = ref(null);
-const taskStarted = ref(false);
 const taskIsDone = ref(false);
 const browserInfo = ref();
 const all_blocks_results = ref({})
@@ -538,11 +537,8 @@ onMounted(() => {
    *               生成 timeline
    *=============================================**/
   const timeline = []
-  timeline.push(
-    browserCheck,
-    enter_fullscreen,
-    // chinrest,
-  );
+  timeline.push(browserCheck);
+  if (!isMobile) timeline.push(enter_fullscreen);
   const add_block = ()=>{
     exp_bw_cond.session_order.forEach((session, index) => {
       const keyMap = exp_bw_cond.key_balance[session=="shape"?0:1]

@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
   const { file_name, exp_data, type } = body;
 
   if (!file_name || !exp_data || !type) {
-    return { error: true, message: 'Missing required fields: file_name, exp_data, or type.' };
+    return { error: true, message: 'Missing required fields: file_name, exp_data, or type.'};
   }
 
   // Ensure the data directory exists

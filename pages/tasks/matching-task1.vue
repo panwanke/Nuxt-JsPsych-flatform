@@ -47,14 +47,14 @@ const userExpId = ref(null);
 const taskStarted = ref(false);
 const taskIsDone = ref(false);
 const browserInfo = ref();
-const all_blocks_results = ref([])
+const all_blocks_results = ref({})
 let pactice_pass_acc
 let nreps_stim_prac
 let nreps_stim_test
 let nreps_block_test
 let n_all_blocks
 if (testMode) {
-  n_all_blocks = 3
+  n_all_blocks = 4
   nreps_stim_prac = 1;
   nreps_stim_test = 1;
   nreps_block_test = 2;
@@ -78,51 +78,53 @@ const { data:experiment } = await useAsyncData('exp', () => $fetch(`/api/exp/${s
 experimentId.value = experiment.value?.id;
 // console.log('experimentId',experimentId.value)
 
-// 创建 UserExperiment 记录
-const startTask = async () => {
-    const { data } = await useFetch('/api/userexp', {
-      method: 'POST',
-      body: {
-        userId,
-        experimentId: experimentId.value,
-      },
-    });
-    // await refreshNuxtData('item')
-    // console.log('error1',error.value)
-    // console.log('error2',data.value)
 
-    if (data?.value.isDone) {
-      toast.success('您已参加过该实验，不能再次参与!')
-      router.push('/user/myexp')
-    }
-    if (data?.value.error) {
-      console.warn(data?.value.error);
-      // toast.error(error.value)
-      // router.push('/user/myexp')
-    }
-    
-    taskStarted.value = true;
-    userExpId.value = data?.value.id;
-    // console.log('userExpId',userExpId.value)
-};
-await startTask();
+// 获取或创建 UserExperiment 记录
+const { data:userExp } = await useFetch('/api/userexp',{
+      query: {
+        userId,
+        experimentId,
+      },
+  });
+// 检测是否重复参与
+if(userExp.value?.data?.isDone){
+  toast.success('任务已完成！ 不能重复参与')
+  router.push('/user/myexp');
+}
+console.log('userExp', userExp.value)
+if (userExp.value?.data) {
+  userExpId.value = userExp.value.data.id;
+}else{
+  const { data:tmpData1 } = await useFetch('/api/userexp', {
+    method: 'POST',
+    body: {
+      userId,
+      experimentId,
+    },
+  });
+  // console.log('tmpData1',tmpData1.value)
+  userExpId.value = tmpData1.value.data.id;
+}
+console.log('userExpId',userExpId.value)
+
 
 // 完成任务，更新 UserExperiment 的 isDone 状态
 const completeTask = async (metaData={}, fileName, jsonData, csvData) => {
 
-  const { data1 } = await useFetch('/api/userexp', {
+  const { data:data1 } = await useFetch('/api/userexp', {
     method: 'PUT',
     body: {
-      id: userExpId.value,
-      updateData: metaData
+      id: userExpId,
+      ...metaData
     },
   });
+  console.log('data1',data1.value)
   await refreshNuxtData('userexp')
   if (data1.value.error) {
     console.error(data1.value.message);
   }
 
-  const { data2 } = await useFetch('/api/upload-exp-data', {
+  const { data:data2 } = await useFetch('/api/upload-exp-data', {
       method: 'POST',
       body: {
         file_name: fileName,
@@ -133,10 +135,11 @@ const completeTask = async (metaData={}, fileName, jsonData, csvData) => {
         'Content-Type': 'application/json'
       }
   });
+  console.log('data2',data2.value)
   if (data2.value.error) {
     console.error(data2.value.message);
   }
-  const { data3 } = await useFetch('/api/upload-exp-data', {
+  const { data:data3 } = await useFetch('/api/upload-exp-data', {
       method: 'POST',
       body: {
         file_name: fileName,
@@ -147,6 +150,7 @@ const completeTask = async (metaData={}, fileName, jsonData, csvData) => {
         'Content-Type': 'application/json'
       }
   });
+  console.log('data3',data3.value)
   if (data3.value.error) {
     console.error(data3.value.message);
   }
@@ -523,7 +527,8 @@ onMounted(() => {
       repetitions: nreps_block,
       on_timeline_finish: ()=>{
         
-        all_blocks_results.value.push({[task_name]:block_results})
+        // all_blocks_results.value.push({[task_name]:block_results})
+        all_blocks_results.value[task_name] = block_results
         console.log('end of block', all_blocks_results.value, block_counter, practice_counter)
       }
     }

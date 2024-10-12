@@ -8,13 +8,20 @@ export default defineEventHandler(async (event) => {
     try{
         const userExperiment = await prisma.userExperiment.create({
             data: {
-            userId,
-            experimentId,
+                userId:userId,
+                experimentId:experimentId,
             },
         });
 
-        return userExperiment
+        return {
+            data: userExperiment,
+            error: false,
+            message: `user ${userId} with exp ${experimentId} has been created successfully for id ${userExperiment.id}`
+        }
     }catch(e){
-        return {error: `user ${userId} with exp ${experimentId} has been created`}
+        return {
+            error: true,
+            message: `fail to create user ${userId} with exp ${experimentId}`
+        }
     }
 });
